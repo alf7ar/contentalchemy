@@ -1,7 +1,7 @@
 "use client"
 
 import { useParams } from "next/navigation"
-import { Check, Copy, ExternalLink, ArrowLeft, Settings, CreditCard, Globe, Database } from "lucide-react"
+import { Check, Copy, ExternalLink, Settings, Globe, Database, Smartphone } from "lucide-react"
 import { useState } from "react"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
@@ -9,7 +9,7 @@ import Footer from "@/components/Footer"
 const steps = [
   {
     icon: <Database className="w-6 h-6" />,
-    title: "1. إنشاء حساب Supabase",
+    title: "1. إنشاء حساب Supabase (مجاني)",
     desc: "اذهب إلى supabase.com وأنشئ مشروعاً جديداً. اختر منطقة مصر أو أوروبا.",
     action: "افتح Supabase",
     url: "https://supabase.com",
@@ -19,21 +19,19 @@ const steps = [
     ],
   },
   {
-    icon: <CreditCard className="w-6 h-6" />,
-    title: "2. إنشاء حساب Paymob",
-    desc: "سجل في Paymob مصر. ستحتاج إلى بطاقة هوية ورخصة تجارية. استخدم الرابط أدناه.",
-    action: "افتح Paymob مصر",
-    url: "https://accept.paymob.com/portal2/en/login",
+    icon: <Smartphone className="w-6 h-6" />,
+    title: "2. إعداد حساب Instapay",
+    desc: "كل ما تحتاجه هو رقم هاتفك المسجل في Instapay. افتح التطبيق وتأكد من أن رقمك نشط. هذا كل شيء!",
+    action: "فتح Instapay",
+    url: "https://instapay.com",
     fields: [
-      { key: "PAYMOB_API_KEY", label: "API Key", copy: "من لوحة تحكم Paymob" },
-      { key: "PAYMOB_HMAC", label: "HMAC Secret", copy: "من إعدادات Paymob" },
-      { key: "PAYMOB_IFRAME_ID", label: "Iframe ID", copy: "من صفحة الدفع" },
+      { key: "INSTAPAY_NUMBER", label: "رقم Instapay", copy: "010XXXXXXXX (رقم هاتفك)" },
     ],
   },
   {
     icon: <Globe className="w-6 h-6" />,
-    title: "3. شراء دومين",
-    desc: "اشتر دومين من namecheap.com أو godaddy.com. مثلاً: contentalchemy.eg أو contentalchemy.app",
+    title: "3. شراء دومين (اختياري)",
+    desc: "اشتر دومين من namecheap.com أو godaddy.com. مثلاً: contentalchemy.eg",
     action: "شراء دومين",
     url: "https://namecheap.com",
     fields: [
@@ -42,7 +40,7 @@ const steps = [
   },
   {
     icon: <Settings className="w-6 h-6" />,
-    title: "4. ربط Vercel مع GitHub",
+    title: "4. ربط Vercel مع GitHub (مجاني)",
     desc: "اذهب إلى vercel.com، سجل بحساب GitHub، واستورد مشروع contentalchemy. سيتم النشر تلقائياً.",
     action: "افتح Vercel",
     url: "https://vercel.com/new",
@@ -53,7 +51,7 @@ const steps = [
   {
     icon: <Settings className="w-6 h-6" />,
     title: "5. إضافة المتغيرات البيئية",
-    desc: "في Vercel، اذهب إلى Project Settings → Environment Variables وأضف كل المفاتيح من الخطوات أعلاه.",
+    desc: "في Vercel، اذهب إلى Project Settings → Environment Variables. أضف GEMINI_API_KEY وبيانات Supabase ورقم Instapay.",
     action: "فتح Vercel",
     url: "https://vercel.com",
     fields: [],
@@ -61,7 +59,7 @@ const steps = [
   {
     icon: <Check className="w-6 h-6" />,
     title: "6. الموقع جاهز! 🎉",
-    desc: "بعد إضافة المتغيرات، سينشر Vercel الموقع تلقائياً. يمكنك مشاركة الرابط مع عملائك.",
+    desc: "بعد إضافة المتغيرات، سينشر Vercel الموقع تلقائياً. يمكنك البدء في جني الأرباح فوراً عبر Instapay.",
     action: "زيارة الموقع",
     url: "https://contentalchemy.vercel.app",
     fields: [],

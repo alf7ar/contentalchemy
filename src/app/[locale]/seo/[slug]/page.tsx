@@ -17,7 +17,8 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params
-  const page = seoPages.find((p) => p.slug === slug)
+  const decodedSlug = decodeURIComponent(slug)
+  const page = seoPages.find((p) => p.slug === decodedSlug)
   if (!page) return { title: "غير موجود" }
 
   return {
@@ -27,12 +28,12 @@ export async function generateMetadata({
   }
 }
 
-export default async function SEOPage({
-  params,
-}: {
+export default async function SEOPage(props: {
   params: Promise<{ slug: string; locale: string }>
 }) {
-  const { slug, locale } = await params
+  const params = await props.params
+  const slug = decodeURIComponent(params.slug)
+  const locale = params.locale
   const page = seoPages.find((p) => p.slug === slug)
   if (!page) notFound()
 
