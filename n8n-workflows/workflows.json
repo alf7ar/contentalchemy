@@ -1,0 +1,155 @@
+[
+  {
+    "name": "Welcome Email Sequence",
+    "nodes": [
+      {
+        "name": "Webhook - New User Signup",
+        "type": "n8n-nodes-base.webhook",
+        "parameters": {
+          "path": "new-user",
+          "responseMode": "responseNode"
+        }
+      },
+      {
+        "name": "Send Welcome Email",
+        "type": "n8n-nodes-base.emailSend",
+        "parameters": {
+          "fromEmail": "welcome@contentalchemy.com",
+          "subject": "مرحباً بك في ContentAlchemy! 🎉",
+          "text": "شكراً لاشتراكك في ContentAlchemy. ابدأ الآن في إنشاء محتوى احترافي لسوشيال ميديا.",
+          "html": "<h1>مرحباً بك في ContentAlchemy! 🎉</h1><p>شكراً لاشتراكك في ContentAlchemy. ابدأ الآن في إنشاء محتوى احترافي لسوشيال ميديا.</p><a href='{{ $json.dashboardUrl }}'>افتح لوحة التحكم</a>"
+        }
+      },
+      {
+        "name": "Schedule Follow-up Day 3",
+        "type": "n8n-nodes-base.wait",
+        "parameters": {
+          "amount": 3,
+          "unit": "days"
+        }
+      },
+      {
+        "name": "Send Follow-up Email",
+        "type": "n8n-nodes-base.emailSend",
+        "parameters": {
+          "fromEmail": "tips@contentalchemy.com",
+          "subject": "٣ نصائح لتحسين محتواك على السوشيال ميديا",
+          "text": "إليك ٣ نصائح لتحسين محتواك على السوشيال ميديا باستخدام ContentAlchemy..."
+        }
+      },
+      {
+        "name": "Schedule Upgrade Reminder Day 7",
+        "type": "n8n-nodes-base.wait",
+        "parameters": {
+          "amount": 7,
+          "unit": "days"
+        }
+      },
+      {
+        "name": "Send Upgrade Offer",
+        "type": "n8n-nodes-base.emailSend",
+        "parameters": {
+          "fromEmail": "offers@contentalchemy.com",
+          "subject": "عرض خاص: باقة ContentAlchemy الاحترافية",
+          "text": "استخدم الكود CONTENT20 للحصول على 20% خصم على الباقة الاحترافية..."
+        }
+      }
+    ]
+  },
+  {
+    "name": "Usage Alert",
+    "nodes": [
+      {
+        "name": "Schedule Check",
+        "type": "n8n-nodes-base.cron",
+        "parameters": {
+          "expression": "0 9 * * *"
+        }
+      },
+      {
+        "name": "Check Usage via API",
+        "type": "n8n-nodes-base.httpRequest",
+        "parameters": {
+          "url": "https://contentalchemy.com/api/users/usage?apiKey={{ $json.apiKey }}",
+          "method": "GET"
+        }
+      },
+      {
+        "name": "If Usage > 80%",
+        "type": "n8n-nodes-base.if",
+        "parameters": {
+          "conditions": {
+            "number": [{ "value1": "={{ $json.usagePercent }}", "value2": 80, "operation": "larger" }]
+          }
+        }
+      },
+      {
+        "name": "Send Usage Alert",
+        "type": "n8n-nodes-base.emailSend",
+        "parameters": {
+          "fromEmail": "alerts@contentalchemy.com",
+          "subject": "تنبيه: باقي {{ $json.remainingPosts }} منشور فقط في خطتك",
+          "text": "وصلت لـ {{ $json.usagePercent }}% من حد استخدامك. طور خطتك للحصول على منشورات غير محدودة."
+        }
+      }
+    ]
+  },
+  {
+    "name": "Payment Reminder",
+    "nodes": [
+      {
+        "name": "Schedule Daily Check",
+        "type": "n8n-nodes-base.cron",
+        "parameters": {
+          "expression": "0 10 * * *"
+        }
+      },
+      {
+        "name": "Check Expiring Subscriptions",
+        "type": "n8n-nodes-base.httpRequest",
+        "parameters": {
+          "url": "https://contentalchemy.com/api/subscriptions/expiring?days=3",
+          "method": "GET"
+        }
+      },
+      {
+        "name": "Send Payment Reminder",
+        "type": "n8n-nodes-base.emailSend",
+        "parameters": {
+          "fromEmail": "billing@contentalchemy.com",
+          "subject": "تذكير: باقي ٣ أيام على تجديد اشتراكك",
+          "text": "عذراً، اشتراكك في ContentAlchemy سينتهي بعد ٣ أيام. جدد الآن لاستمرار الخدمة."
+        }
+      }
+    ]
+  },
+  {
+    "name": "Social Media Auto-Post",
+    "nodes": [
+      {
+        "name": "Schedule Daily Posts",
+        "type": "n8n-nodes-base.cron",
+        "parameters": {
+          "expression": "0 9,13,18 * * *"
+        }
+      },
+      {
+        "name": "Generate Post",
+        "type": "n8n-nodes-base.httpRequest",
+        "parameters": {
+          "url": "https://contentalchemy.com/api/generate",
+          "method": "POST",
+          "body": "{\"platform\":\"facebook\",\"topic\":\"نصائح تسويق رقمي\",\"businessType\":\"تسويق\"}"
+        }
+      },
+      {
+        "name": "Post to Facebook",
+        "type": "n8n-nodes-base.facebookGraphApi",
+        "parameters": {
+          "pageId": "{{ $json.pageId }}",
+          "message": "={{ $json.result.content }}"
+        }
+      }
+    ]
+  }
+]
