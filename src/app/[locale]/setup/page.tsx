@@ -51,7 +51,7 @@ const steps = [
   {
     icon: <Settings className="w-6 h-6" />,
     title: "5. إضافة المتغيرات البيئية",
-    desc: "في Vercel، اذهب إلى Project Settings → Environment Variables. أضف GEMINI_API_KEY وبيانات Supabase ورقم Instapay.",
+    desc: "في Vercel، اذهب إلى Project Settings → Environment Variables. أضف OPENAI_API_KEY وبيانات Supabase ورقم Instapay.",
     action: "فتح Vercel",
     url: "https://vercel.com",
     fields: [],

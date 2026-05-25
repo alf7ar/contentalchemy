@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { useParams } from "next/navigation"
-import { generateContent, type Platform } from "@/lib/gemini"
+type Platform = "instagram" | "facebook" | "tiktok" | "linkedin" | "ads"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import {
@@ -60,18 +60,27 @@ export default function DashboardPage() {
     setGenerating(true)
     setResults([])
 
+    const callApi = async (platform: Platform) => {
+      const res = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ platform, topic, businessName, businessType, tone }),
+      })
+      if (!res.ok) throw new Error("API error")
+      return res.json() as Promise<{ title: string; content: string; hashtags: string[] }>
+    }
+
     try {
       if (selectedPlatform === "all") {
         const platforms: Platform[] = ["instagram", "facebook", "tiktok", "linkedin", "ads"]
         const allResults = await Promise.all(
           platforms.map(platform =>
-            generateContent({ platform, topic, businessName, businessType, tone })
-              .then(r => ({ platform, title: r.title, content: r.content, hashtags: r.hashtags }))
+            callApi(platform).then(r => ({ platform, title: r.title, content: r.content, hashtags: r.hashtags }))
           )
         )
         setResults(allResults)
       } else {
-        const result = await generateContent({ platform: selectedPlatform, topic, businessName, businessType, tone })
+        const result = await callApi(selectedPlatform)
         setResults([{ platform: selectedPlatform, title: result.title, content: result.content, hashtags: result.hashtags }])
       }
     } catch (error) {

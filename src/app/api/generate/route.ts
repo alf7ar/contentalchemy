@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { generateContent, type Platform } from "@/lib/gemini"
+import { generateContent, type Platform } from "@/lib/openai"
 
 export async function POST(request: NextRequest) {
   try {
