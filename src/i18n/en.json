@@ -1,0 +1,106 @@
+{
+  "nav": {
+    "home": "Home",
+    "pricing": "Pricing",
+    "dashboard": "Dashboard",
+    "login": "Login",
+    "signup": "Sign Up",
+    "logout": "Logout"
+  },
+  "hero": {
+    "title": "Create Professional Marketing Content with AI",
+    "subtitle": "All-in-one tool for creating social media content in Arabic and English. Save time and boost engagement with professional content in seconds",
+    "cta": "Start Free",
+    "demo": "See Demo"
+  },
+  "features": {
+    "title": "Why ContentAlchemy?",
+    "arabic": {
+      "title": "Professional Arabic Content",
+      "desc": "Supports formal Arabic and Egyptian dialect, designed specifically for the Egyptian market"
+    },
+    "platforms": {
+      "title": "All Platforms",
+      "desc": "Complete content for Instagram, Facebook, TikTok, LinkedIn, and Ads"
+    },
+    "ai": {
+      "title": "Advanced AI",
+      "desc": "Gemini technology understands your business and creates tailored content"
+    },
+    "speed": {
+      "title": "Instant Results",
+      "desc": "Get ready-to-publish content in seconds instead of hours of manual work"
+    }
+  },
+  "pricing": {
+    "title": "Choose Your Plan",
+    "subtitle": "Start free, grow your business with premium plans",
+    "free": "Free",
+    "starter": "Starter",
+    "pro": "Pro",
+    "agency": "Agency",
+    "free_desc": "Try the tool with no cost",
+    "starter_desc": "For individuals and small businesses",
+    "pro_desc": "For professionals and medium businesses",
+    "agency_desc": "For agencies and large enterprises",
+    "posts_month": "posts/month",
+    "posts_unlimited": "Unlimited",
+    "brands": "brands",
+    "cta_free": "Start Free",
+    "cta_paid": "Subscribe Now",
+    "per_month": "/month",
+    "popular": "Most Popular"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "generate": "Create New Content",
+    "history": "Content History",
+    "settings": "Settings",
+    "usage": "Your Usage",
+    "posts_used": "Used",
+    "posts_remaining": "Remaining",
+    "out_of": "of",
+    "posts": "posts",
+    "upgrade": "Upgrade Plan",
+    "no_content": "You haven't created any content yet",
+    "input_placeholder": "Enter post topic, article URL, or product description...",
+    "business_name": "Business Name",
+    "business_type": "Business Type",
+    "tone": "Content Tone",
+    "tone_professional": "Professional",
+    "tone_casual": "Casual",
+    "tone_luxury": "Luxury",
+    "tone_funny": "Funny",
+    "generate_btn": "Generate Content",
+    "generating": "Generating...",
+    "platform_all": "All Platforms",
+    "platform_instagram": "Instagram",
+    "platform_facebook": "Facebook",
+    "platform_tiktok": "TikTok",
+    "platform_linkedin": "LinkedIn",
+    "platform_ads": "Ads",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "regenerate": "Regenerate"
+  },
+  "auth": {
+    "login_title": "Login",
+    "signup_title": "Create Account",
+    "email": "Email",
+    "password": "Password",
+    "name": "Name",
+    "phone": "Phone Number",
+    "login_btn": "Login",
+    "signup_btn": "Sign Up",
+    "no_account": "Don't have an account?",
+    "has_account": "Already have an account?",
+    "or": "Or",
+    "google": "Continue with Google"
+  },
+  "footer": {
+    "rights": "All rights reserved",
+    "terms": "Terms & Conditions",
+    "privacy": "Privacy Policy",
+    "contact": "Contact Us"
+  }
+}
