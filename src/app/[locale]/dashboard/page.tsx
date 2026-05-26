@@ -7,7 +7,7 @@ import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import {
   Sparkles, Copy, Check, RefreshCw,
-  Camera, Share2, Video, Users, Megaphone, LoaderCircle, BarChart3,
+  Camera, Share2, Video, Users, Megaphone, LoaderCircle, BarChart3, MessageCircle,
 } from "lucide-react"
 
 const platformIcons: Record<Platform, React.ReactNode> = {
@@ -281,6 +281,22 @@ export default function DashboardPage() {
                 </div>
               ) : (
                 <div className="space-y-6">
+                  {results.length > 1 && !generating && (
+                    <div className="flex items-center justify-end">
+                      <button
+                        onClick={() => {
+                          const allText = results.map(r =>
+                            `[${r.platform.toUpperCase()}]\n${r.title}\n\n${r.content}\n\n${r.hashtags.join(" ")}`
+                          ).join("\n\n═══════════════════════\n\n")
+                          copyToClipboard(allText, 999)
+                        }}
+                        className="px-4 py-2 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 text-sm font-medium transition-colors flex items-center gap-2"
+                      >
+                        <Copy className="w-4 h-4" />
+                        نسخ الكل
+                      </button>
+                    </div>
+                  )}
                   {generating && (
                     <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center">
                       <LoaderCircle className="w-12 h-12 animate-spin text-primary-600 mx-auto mb-4" />
@@ -304,10 +320,22 @@ export default function DashboardPage() {
                             <p className="text-sm text-gray-500 capitalize">{result.platform}</p>
                           </div>
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1">
+                          {/* WhatsApp share */}
+                          <button
+                            onClick={() => {
+                              const text = encodeURIComponent(`${result.title}\n\n${result.content}\n\n${result.hashtags.join(" ")}`)
+                              window.open(`https://wa.me/?text=${text}`, "_blank")
+                            }}
+                            className="p-2 rounded-lg hover:bg-white/50 transition-colors"
+                            title="مشاركة على واتساب"
+                          >
+                            <MessageCircle className="w-5 h-5 text-green-500" />
+                          </button>
                           <button
                             onClick={() => copyToClipboard(result.content + "\n\n" + result.hashtags.join(" "), index)}
                             className="p-2 rounded-lg hover:bg-white/50 transition-colors"
+                            title="نسخ"
                           >
                             {copiedIndex === index ? (
                               <Check className="w-5 h-5 text-green-600" />
@@ -315,7 +343,7 @@ export default function DashboardPage() {
                               <Copy className="w-5 h-5 text-gray-500" />
                             )}
                           </button>
-                          <button className="p-2 rounded-lg hover:bg-white/50 transition-colors">
+                          <button className="p-2 rounded-lg hover:bg-white/50 transition-colors" title="إعادة إنشاء">
                             <RefreshCw className="w-5 h-5 text-gray-500" />
                           </button>
                         </div>
