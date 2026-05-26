@@ -1,7 +1,7 @@
 "use client"
 
 import { useParams } from "next/navigation"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import { Gift, Users, Award, Copy, CheckCircle2, Share2, Sparkles } from "lucide-react"
@@ -11,6 +11,10 @@ export default function ReferPage() {
   const locale = params.locale as string
   const isAr = locale === "ar"
   const [copied, setCopied] = useState(false)
+
+  useEffect(() => {
+    document.title = isAr ? "برنامج الدعوة - ContentAlchemy" : "Referral Program - ContentAlchemy"
+  }, [isAr])
 
   // Simulated referral link — in production this would be user-specific
   const referralLink = "https://contentalchemy.com/ar/auth?ref=USER123"

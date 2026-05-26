@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useParams } from "next/navigation"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
@@ -10,6 +10,10 @@ export default function ContactPage() {
   const params = useParams()
   const locale = params.locale as string
   const isAr = locale === "ar"
+
+  useEffect(() => {
+    document.title = isAr ? "تواصل معنا - ContentAlchemy" : "Contact Us - ContentAlchemy"
+  }, [isAr])
   const [form, setForm] = useState({ name: "", email: "", message: "" })
   const [sent, setSent] = useState(false)
   const [loading, setLoading] = useState(false)

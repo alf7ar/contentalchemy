@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect } from "react"
 import { useParams } from "next/navigation"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
@@ -8,6 +9,10 @@ export default function PrivacyPage() {
   const params = useParams()
   const locale = params.locale as string
   const isAr = locale === "ar"
+
+  useEffect(() => {
+    document.title = isAr ? "سياسة الخصوصية - ContentAlchemy" : "Privacy Policy - ContentAlchemy"
+  }, [isAr])
 
   return (
     <>

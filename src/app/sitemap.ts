@@ -13,6 +13,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}/en/dashboard`, lastModified: new Date() },
     { url: `${baseUrl}/ar/auth`, lastModified: new Date() },
     { url: `${baseUrl}/en/auth`, lastModified: new Date() },
+    { url: `${baseUrl}/ar/features`, lastModified: new Date() },
+    { url: `${baseUrl}/en/features`, lastModified: new Date() },
+    { url: `${baseUrl}/ar/contact`, lastModified: new Date() },
+    { url: `${baseUrl}/en/contact`, lastModified: new Date() },
+    { url: `${baseUrl}/ar/refer`, lastModified: new Date() },
+    { url: `${baseUrl}/en/refer`, lastModified: new Date() },
+    { url: `${baseUrl}/ar/terms`, lastModified: new Date() },
+    { url: `${baseUrl}/en/terms`, lastModified: new Date() },
+    { url: `${baseUrl}/ar/privacy`, lastModified: new Date() },
+    { url: `${baseUrl}/en/privacy`, lastModified: new Date() },
   ]
 
   const seoEntries = seoPages.flatMap((page) => [

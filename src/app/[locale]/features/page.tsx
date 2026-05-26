@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect } from "react"
 import Link from "next/link"
 import { useParams } from "next/navigation"
 import Navbar from "@/components/Navbar"
@@ -83,6 +84,10 @@ export default function FeaturesPage() {
   const params = useParams()
   const locale = params.locale as string
   const isAr = locale === "ar"
+
+  useEffect(() => {
+    document.title = isAr ? "ميزات ContentAlchemy - أداة إنشاء محتوى السوشيال ميديا" : "ContentAlchemy Features - AI Social Media Content Generator"
+  }, [isAr])
 
   return (
     <>
