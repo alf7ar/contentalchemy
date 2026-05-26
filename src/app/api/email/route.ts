@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server"
 import { sendEmail, getWelcomeEmailHtml } from "@/lib/email"
-import { createClient } from "@/lib/supabase"
+import { createServerSupabaseClient } from "@/lib/supabase"
 
 export async function POST(_request: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = await createServerSupabaseClient()
     const { data: { session } } = await supabase.auth.getSession()
 
     if (!session?.user?.email) {

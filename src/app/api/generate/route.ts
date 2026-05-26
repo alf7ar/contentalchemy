@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase"
+import { createServerSupabaseClient } from "@/lib/supabase"
 import { generateContent, type Platform } from "@/lib/openai"
 import { checkUsageLimit, incrementUsage } from "@/lib/db"
 
@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check authentication
-    const supabase = createClient()
+    const supabase = await createServerSupabaseClient()
     const { data: { session } } = await supabase.auth.getSession()
 
     if (!session?.user) {

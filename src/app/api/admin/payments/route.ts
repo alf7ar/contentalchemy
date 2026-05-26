@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase"
+import { createServerSupabaseClient } from "@/lib/supabase"
 import { isAdmin } from "@/lib/admin"
 
 export async function GET(_request: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = await createServerSupabaseClient()
     const { data: { session } } = await supabase.auth.getSession()
 
     if (!session?.user?.email || !isAdmin(session.user.email)) {
@@ -58,7 +58,7 @@ export async function GET(_request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = await createServerSupabaseClient()
     const { data: { session } } = await supabase.auth.getSession()
 
     if (!session?.user?.email || !isAdmin(session.user.email)) {

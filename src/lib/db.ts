@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase"
+import { createServerSupabaseClient } from "@/lib/supabase"
 import type { PlanId } from "@/lib/payment"
 
 export interface UserSubscription {
@@ -46,7 +46,7 @@ function getCurrentMonthKey(): string {
  * Get the current user's subscription
  */
 export async function getUserSubscription(userId: string): Promise<UserSubscription | null> {
-  const supabase = createClient()
+  const supabase = await createServerSupabaseClient()
   const { data, error } = await supabase
     .from("subscriptions")
     .select("*")
@@ -63,7 +63,7 @@ export async function getUserSubscription(userId: string): Promise<UserSubscript
  * Get usage record for current month
  */
 export async function getCurrentUsage(userId: string): Promise<UsageRecord | null> {
-  const supabase = createClient()
+  const supabase = await createServerSupabaseClient()
   const monthKey = getCurrentMonthKey()
 
   const { data, error } = await supabase
@@ -83,7 +83,7 @@ export async function getCurrentUsage(userId: string): Promise<UsageRecord | nul
  * Increment usage counter for current month
  */
 export async function incrementUsage(userId: string): Promise<boolean> {
-  const supabase = createClient()
+  const supabase = await createServerSupabaseClient()
   const monthKey = getCurrentMonthKey()
 
   // Check if record exists
@@ -126,7 +126,6 @@ export async function checkUsageLimit(userId: string): Promise<{
   error?: string
 }> {
   try {
-    const supabase = createClient()
     const subscription = await getUserSubscription(userId)
 
     // If no subscription found, use free plan defaults
@@ -174,7 +173,7 @@ export async function updateSubscriptionPlan(
   userId: string,
   planId: PlanId,
 ): Promise<boolean> {
-  const supabase = createClient()
+  const supabase = await createServerSupabaseClient()
   const limit = PLAN_POST_LIMITS[planId]
   const displayLimit = limit === -1 ? 999999 : limit
 
@@ -205,7 +204,7 @@ export async function verifyPayment(params: {
   paymentMethod: string
   transactionRef: string
 }): Promise<{ success: boolean; error?: string }> {
-  const supabase = createClient()
+  const supabase = await createServerSupabaseClient()
 
   // First, check if the user has a subscription
   const subscription = await getUserSubscription(params.userId)
@@ -269,7 +268,7 @@ export async function verifyPayment(params: {
  * Get all payment records for admin (from content_history)
  */
 export async function getPaymentRecords() {
-  const supabase = createClient()
+  const supabase = await createServerSupabaseClient()
   const { data, error } = await supabase
     .from("content_history")
     .select("*")

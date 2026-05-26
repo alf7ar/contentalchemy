@@ -31,8 +31,8 @@ export async function POST(request: NextRequest) {
       const ref = transactionRef || generateInstapayRef()
 
       // Store payment intent in content_history
-      const { createClient } = await import("@/lib/supabase")
-      const supabase = createClient()
+      const { createServerSupabaseClient: makeClient } = await import("@/lib/supabase")
+      const supabase = await makeClient()
       await supabase.from("content_history").insert({
         user_id: userId,
         platform: "payment",
