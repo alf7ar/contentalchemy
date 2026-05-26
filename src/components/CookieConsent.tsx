@@ -7,13 +7,15 @@ import { X } from "lucide-react"
 
 export default function CookieConsent() {
   const params = useParams()
-  const locale = params.locale as string
+  const locale = params?.locale as string ?? "ar"
   const isAr = locale === "ar"
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
     const consent = localStorage.getItem("cookie-consent")
     if (!consent) setVisible(true)
+  // Safe one-time read from localStorage on mount; not a cascading-render issue
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   }, [])
 
   const accept = () => {

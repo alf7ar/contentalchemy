@@ -9,9 +9,14 @@ import { Check, Sparkles, ArrowLeft } from "lucide-react"
 export const dynamicParams = true
 
 export async function generateStaticParams() {
-  return seoPages.map((page) => ({
-    slug: page.slug,
-  }))
+  const locales = ["ar", "en"]
+  const params: { locale: string; slug: string }[] = []
+  for (const locale of locales) {
+    for (const page of seoPages) {
+      params.push({ locale, slug: page.slug })
+    }
+  }
+  return params
 }
 
 export async function generateMetadata({

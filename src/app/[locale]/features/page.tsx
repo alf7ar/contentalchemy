@@ -5,7 +5,7 @@ import Link from "next/link"
 import { useParams } from "next/navigation"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
-import { Sparkles, Globe, Smartphone, Palette, Hash, Share2, BarChart3, Shield, Bot, Zap, Layers, Repeat } from "lucide-react"
+import { Globe, Smartphone, Palette, Hash, Share2, BarChart3, Shield, Bot, Zap, Layers, Repeat } from "lucide-react"
 
 const features = [
   {

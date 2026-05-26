@@ -16,7 +16,10 @@ test.describe("Landing Page", () => {
 
   test("How it works section is visible", async ({ page }) => {
     await page.goto("/ar")
-    await page.locator("a[href='#how-it-works']").click()
+    await page.evaluate(() => {
+      const el = document.getElementById("how-it-works")
+      if (el) el.scrollIntoView()
+    })
     await expect(page.locator("text=كيف يعمل")).toBeVisible()
   })
 

@@ -46,7 +46,7 @@ export default function TermsPage() {
                 <p>ممنوع استخدام الخدمة في إنشاء محتوى مخالف للقانون أو مسيء أو ينتهك حقوق الآخرين. احنا بنحتفظ بالحق في إلغاء حساب أي مستخدم بينتهك هذه السياسة.</p>
 
                 <h2 className="text-xl font-bold text-gray-900 mt-8">7. إخلاء مسؤولية</h2>
-                <p>الخدمة متوفرة "كما هي" بدون أي ضمانات. ContentAlchemy مش مسؤولة عن أي أضرار تنتج عن استخدام الخدمة.</p>
+                <p>الخدمة متوفرة &ldquo;كما هي&rdquo; بدون أي ضمانات. ContentAlchemy مش مسؤولة عن أي أضرار تنتج عن استخدام الخدمة.</p>
 
                 <h2 className="text-xl font-bold text-gray-900 mt-8">8. تغيير الشروط</h2>
                 <p>احنا بنحتفظ بالحق في تغيير هذه الشروط في أي وقت. هنانشر التغييرات على الصفحة دي وهنوافيك عبر الإيميل لو فيه تغييرات جوهرية.</p>
@@ -75,7 +75,7 @@ export default function TermsPage() {
                 <p>You may not use the service to create illegal, offensive, or infringing content. We reserve the right to terminate accounts that violate this policy.</p>
 
                 <h2 className="text-xl font-bold text-gray-900 mt-8">7. Disclaimer</h2>
-                <p>The service is provided "as is" without warranties of any kind. ContentAlchemy is not liable for any damages arising from the use of the service.</p>
+                <p>The service is provided &ldquo;as is&rdquo; without warranties of any kind. ContentAlchemy is not liable for any damages arising from the use of the service.</p>
 
                 <h2 className="text-xl font-bold text-gray-900 mt-8">8. Changes to Terms</h2>
                 <p>We reserve the right to modify these terms at any time. Changes will be posted on this page and notified via email for material changes.</p>
