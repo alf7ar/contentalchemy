@@ -6,6 +6,7 @@ import { useParams, useRouter, useSearchParams } from "next/navigation"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import { createClient } from "@/lib/supabase"
+import { Sparkles, Shield, Zap, Smartphone, Check, Wallet } from "lucide-react"
 
 export default function AuthPage() {
   const t = useTranslations("auth")
@@ -88,15 +89,48 @@ export default function AuthPage() {
     <>
       <Navbar />
       <main className="flex-1 bg-gradient-to-b from-white to-gray-50 flex items-center justify-center py-20 px-4">
-        <div className="w-full max-w-md">
+        <div className="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+          {/* Value Props */}
+          <div className="hidden lg:block lg:sticky lg:top-24">
+            <div className="bg-gradient-to-br from-primary-600 to-primary-800 rounded-3xl p-8 text-white">
+              <Sparkles className="w-10 h-10 mb-4 text-primary-200" />
+              <h2 className="text-2xl font-bold mb-2">انضم لـ ContentAlchemy</h2>
+              <p className="text-primary-100 mb-6">أنشئ محتوى احترافي لسوشيال ميديا بالعربية والمصرية</p>
+              <ul className="space-y-4">
+                {[
+                  { icon: Zap, text: "ذكاء اصطناعي متطور - GPT-4o + Gemini" },
+                  { icon: Smartphone, text: "محتوى لـ 6 منصات مختلفة" },
+                  { icon: Sparkles, text: "7 نغمات محتوى تناسب علامتك" },
+                  { icon: Wallet, text: "الدفع عبر Instapay أو Vodafone Cash" },
+                  { icon: Shield, text: "محتوى آمن وخاص - مش بنشارك بياناتك" },
+                  { icon: Check, text: "أول 10 محتويات مجاناً - جرب قبل ما تشتري" },
+                ].map((item, i) => {
+                  const Icon = item.icon
+                  return (
+                    <li key={i} className="flex items-center gap-3">
+                      <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <Icon className="w-4 h-4 text-primary-200" />
+                      </div>
+                      <span className="text-sm text-white/90">{item.text}</span>
+                    </li>
+                  )
+                })}
+              </ul>
+            </div>
+          </div>
+
+        <div className="w-full">
           <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
             <div className="text-center mb-8">
               <h1 className="text-2xl font-bold text-gray-900 mb-2">
                 {isLogin ? t("login_title") : t("signup_title")}
               </h1>
-              <p className="text-gray-500">
-                {plan && `باقة ${plan === "pro" ? "احترافي" : plan === "agency" ? "وكالة" : "ستارتر"}`}
-              </p>
+              {plan && (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-primary-50 text-primary-700 rounded-full text-sm font-medium">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  {plan === "pro" ? "باقة احترافي" : plan === "agency" ? "باقة وكالة" : "باقة ستارتر"}
+                </span>
+              )}
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -204,6 +238,7 @@ export default function AuthPage() {
                 {isLogin ? t("signup") : t("login")}
               </button>
             </p>
+            </div>
           </div>
         </div>
       </main>
