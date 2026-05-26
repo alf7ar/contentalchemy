@@ -137,43 +137,52 @@ export async function checkUsageLimit(userId: string): Promise<{
   usage: UsageInfo
   error?: string
 }> {
-  const subscription = await getUserSubscription(userId)
-  const planId: PlanId = subscription?.plan_id ?? "free"
-  const limit = PLAN_POST_LIMITS[planId]
+  try {
+    const subscription = await getUserSubscription(userId)
+    const planId: PlanId = subscription?.plan_id ?? "free"
+    const limit = PLAN_POST_LIMITS[planId]
 
-  // Pro/Agency = unlimited
-  if (limit === -1) {
+    // Pro/Agency = unlimited
+    if (limit === -1) {
+      return {
+        allowed: true,
+        usage: { used: 0, limit: -1, remaining: 999999, plan: planId, isPro: true },
+      }
+    }
+
+    const usage = await getOrCreateUsage(userId, planId)
+
+    if (usage.posts_used >= limit) {
+      return {
+        allowed: false,
+        usage: {
+          used: usage.posts_used,
+          limit,
+          remaining: 0,
+          plan: planId,
+          isPro: false,
+        },
+        error: `You've reached your monthly limit of ${limit} posts. Upgrade your plan to generate more.`,
+      }
+    }
+
     return {
       allowed: true,
-      usage: { used: 0, limit: -1, remaining: 999999, plan: planId, isPro: true },
-    }
-  }
-
-  const usage = await getOrCreateUsage(userId, planId)
-
-  if (usage.posts_used >= limit) {
-    return {
-      allowed: false,
       usage: {
         used: usage.posts_used,
         limit,
-        remaining: 0,
+        remaining: limit - usage.posts_used,
         plan: planId,
         isPro: false,
       },
-      error: `You've reached your monthly limit of ${limit} posts. Upgrade your plan to generate more.`,
     }
-  }
-
-  return {
-    allowed: true,
-    usage: {
-      used: usage.posts_used,
-      limit,
-      remaining: limit - usage.posts_used,
-      plan: planId,
-      isPro: false,
-    },
+  } catch (dbError) {
+    // Graceful fallback: if DB tables don't exist yet, allow generation
+    console.warn("DB not ready for usage tracking, allowing (run migration):", dbError)
+    return {
+      allowed: true,
+      usage: { used: 0, limit: 999, remaining: 999, plan: "free", isPro: false },
+    }
   }
 }
 

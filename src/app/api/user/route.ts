@@ -14,8 +14,14 @@ export async function GET(_request: NextRequest) {
       )
     }
 
-    const usage = await checkUsageLimit(session.user.id)
-    const subscription = await getUserSubscription(session.user.id)
+    let usageResult: { allowed: boolean; usage: { used: number; limit: number; remaining: number; plan: string; isPro: boolean }; error?: string }
+    let subscription: Awaited<ReturnType<typeof getUserSubscription>> | null = null
+    try {
+      usageResult = await checkUsageLimit(session.user.id)
+      subscription = await getUserSubscription(session.user.id)
+    } catch {
+      usageResult = { allowed: true, usage: { used: 0, limit: 999, remaining: 999, plan: "free", isPro: false } }
+    }
 
     return NextResponse.json({
       authenticated: true,
@@ -24,7 +30,7 @@ export async function GET(_request: NextRequest) {
         email: session.user.email,
         name: session.user.user_metadata?.full_name || null,
       },
-      usage: usage.usage,
+      usage: usageResult.usage,
       subscription: subscription
         ? {
             plan: subscription.plan_id,
