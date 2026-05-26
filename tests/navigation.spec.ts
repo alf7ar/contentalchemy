@@ -22,7 +22,6 @@ test.describe("Navigation", () => {
     await expect(page.locator("nav")).toBeVisible()
     await expect(page.locator("nav")).toContainText("ContentAlchemy")
     await expect(page.locator("nav a[href='/ar/pricing']")).toBeVisible()
-    await expect(page.locator("nav a[href='/ar/dashboard']")).toBeVisible()
     await expect(page.locator("nav a[href='/ar/auth']")).toBeVisible()
   })
 

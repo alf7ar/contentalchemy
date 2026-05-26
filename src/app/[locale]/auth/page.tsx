@@ -1,18 +1,88 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useTranslations } from "next-intl"
-import { useParams, useSearchParams } from "next/navigation"
+import { useParams, useRouter, useSearchParams } from "next/navigation"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
+import { createClient } from "@/lib/supabase"
 
 export default function AuthPage() {
   const t = useTranslations("auth")
   const params = useParams()
+  const router = useRouter()
   const searchParams = useSearchParams()
   const locale = params.locale as string
   const [isLogin, setIsLogin] = useState(false)
   const plan = searchParams.get("plan")
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const [name, setName] = useState("")
+  const [email, setEmail] = useState("")
+  const [phone, setPhone] = useState("")
+  const [password, setPassword] = useState("")
+
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) router.replace(`/${locale}/dashboard`)
+    })
+  }, [locale, router])
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    setError(null)
+
+    const supabase = createClient()
+
+    if (isLogin) {
+      const { error } = await supabase.auth.signInWithPassword({ email, password })
+      if (error) {
+        setError(error.message === "Invalid login credentials"
+          ? (locale === "ar" ? "البريد الإلكتروني أو كلمة المرور غير صحيحة" : "Invalid email or password")
+          : error.message)
+        setLoading(false)
+        return
+      }
+    } else {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { full_name: name, phone },
+        },
+      })
+      if (error) {
+        setError(error.message)
+        setLoading(false)
+        return
+      }
+      if (locale === "ar") {
+        setError("تم إنشاء الحساب! تحقق من بريدك الإلكتروني لتأكيد الحساب.")
+      } else {
+        setError("Account created! Check your email to confirm.")
+      }
+      setLoading(false)
+      return
+    }
+
+    router.replace(`/${locale}/dashboard`)
+  }
+
+  const handleGoogle = async () => {
+    setLoading(true)
+    const supabase = createClient()
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/${locale}/auth/callback`,
+      },
+    })
+    if (error) setError(error.message)
+    setLoading(false)
+  }
 
   return (
     <>
@@ -29,8 +99,13 @@ export default function AuthPage() {
               </p>
             </div>
 
-            <div className="space-y-4">
-              <button className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-200 rounded-2xl hover:bg-gray-50 transition-colors">
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <button
+                type="button"
+                onClick={handleGoogle}
+                disabled={loading}
+                className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-200 rounded-2xl hover:bg-gray-50 transition-colors disabled:opacity-50"
+              >
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
                   <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -49,46 +124,76 @@ export default function AuthPage() {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t("name")}</label>
-                <input
-                  type="text"
-                  className="w-full px-4 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all"
-                  placeholder={locale === "ar" ? "الاسم الكامل" : "Full name"}
-                />
-              </div>
+              {!isLogin && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t("name")}</label>
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                    className="w-full px-4 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all"
+                    placeholder={locale === "ar" ? "الاسم الكامل" : "Full name"}
+                  />
+                </div>
+              )}
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t("email")}</label>
                 <input
                   type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
                   className="w-full px-4 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all"
                   placeholder="email@example.com"
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t("phone")}</label>
-                <input
-                  type="tel"
-                  className="w-full px-4 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all"
-                  placeholder="010xxxxxxx"
-                />
-              </div>
+              {!isLogin && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t("phone")}</label>
+                  <input
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all"
+                    placeholder="010xxxxxxx"
+                  />
+                </div>
+              )}
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t("password")}</label>
                 <input
                   type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  minLength={6}
                   className="w-full px-4 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all"
                   placeholder="••••••••"
                 />
               </div>
 
-              <button className="w-full py-3 bg-primary-600 text-white rounded-2xl hover:bg-primary-700 font-semibold transition-colors shadow-lg shadow-primary-200">
-                {isLogin ? t("login_btn") : t("signup_btn")}
+              {error && (
+                <div className={`p-3 rounded-2xl text-sm ${
+                  error.includes("تم") || error.includes("Account created")
+                    ? "bg-green-50 text-green-700 border border-green-200"
+                    : "bg-red-50 text-red-700 border border-red-200"
+                }`}>
+                  {error}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-3 bg-primary-600 text-white rounded-2xl hover:bg-primary-700 font-semibold transition-colors shadow-lg shadow-primary-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? (locale === "ar" ? "جاري..." : "Loading...") : (isLogin ? t("login_btn") : t("signup_btn"))}
               </button>
-            </div>
+            </form>
 
             <p className="text-center mt-6 text-sm text-gray-500">
               {isLogin ? t("no_account") : t("has_account")}{" "}
