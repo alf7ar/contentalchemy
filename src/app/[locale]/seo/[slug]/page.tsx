@@ -5,6 +5,9 @@ import Footer from "@/components/Footer"
 import seoPages from "@/lib/seo-pages"
 import { Check, Sparkles, ArrowLeft } from "lucide-react"
 
+// Allow runtime fallback for any locale+slug combination not pre-rendered
+export const dynamicParams = true
+
 export async function generateStaticParams() {
   return seoPages.map((page) => ({
     slug: page.slug,
@@ -32,9 +35,11 @@ export default async function SEOPage(props: {
   params: Promise<{ slug: string; locale: string }>
 }) {
   const params = await props.params
-  const slug = decodeURIComponent(params.slug)
+  const rawSlug = params.slug
+  const slug = decodeURIComponent(rawSlug)
   const locale = params.locale
-  const page = seoPages.find((p) => p.slug === slug)
+  // Try matching both raw (possibly encoded) and decoded slug
+  const page = seoPages.find((p) => p.slug === slug || p.slug === rawSlug)
   if (!page) notFound()
 
   return (

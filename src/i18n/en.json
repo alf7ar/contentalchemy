@@ -106,7 +106,10 @@
     "rights": "All rights reserved",
     "terms": "Terms & Conditions",
     "privacy": "Privacy Policy",
-    "contact": "Contact Us"
+    "contact": "Contact Us",
+    "home": "Home",
+    "features": "Features",
+    "pricing": "Pricing"
   },
   "contact": {
     "title": "Contact Us",
