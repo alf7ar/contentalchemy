@@ -107,5 +107,9 @@
     "terms": "Terms & Conditions",
     "privacy": "Privacy Policy",
     "contact": "Contact Us"
+  },
+  "contact": {
+    "title": "Contact Us",
+    "description": "We're here to help"
   }
 }
