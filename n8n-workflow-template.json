@@ -1,0 +1,144 @@
+{
+  "name": "ContentAlchemy Payment Verification",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "manual-trigger",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "/payment-webhook",
+        "options": {}
+      },
+      "id": "webhook",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "notice": {
+          "message": "Connect your WhatsApp Business API node here.\n\nWorkflow:\n1. WhatsApp receives message with CA-XXXX transaction ref\n2. Extract transactionRef and phoneNumber\n3. POST to https://contentalchemy.com/api/payment-webhook with:\n   { action: 'verify', transactionRef: 'CA-XXX', phoneNumber: '010XXX' }\n4. Send confirmation message back to user"
+        }
+      },
+      "id": "sticky-note",
+      "name": "Setup Instructions",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [450, 100],
+      "height": 200,
+      "width": 400
+    },
+    {
+      "parameters": {
+        "url": "https://contentalchemy.com/api/payment-webhook",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "action",
+              "value": "verify"
+            },
+            {
+              "name": "transactionRef",
+              "value": "={{ $json.transactionRef }}"
+            },
+            {
+              "name": "phoneNumber",
+              "value": "={{ $json.phoneNumber }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "http-request",
+      "name": "Verify Payment at ContentAlchemy",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.success }}",
+              "operation": "equal",
+              "value2": "true"
+            }
+          ]
+        }
+      },
+      "id": "if-node",
+      "name": "Check Result",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "notice": {
+          "message": "Payment verified! Send success message via WhatsApp."
+        }
+      },
+      "id": "success-sticky",
+      "name": "On Success",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [1050, 200]
+    },
+    {
+      "parameters": {
+        "notice": {
+          "message": "Payment not found. Send error message via WhatsApp asking user to check the reference code."
+        }
+      },
+      "id": "fail-sticky",
+      "name": "On Failure",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [1050, 450]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Verify Payment at ContentAlchemy",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify Payment at ContentAlchemy": {
+      "main": [
+        [
+          {
+            "node": "Check Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

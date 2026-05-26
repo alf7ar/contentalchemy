@@ -66,9 +66,21 @@ const steps = [
     ],
   },
   {
+    icon: <Settings className="w-6 h-6" />,
+    title: "7. إعداد n8n للتحقق التلقائي من المدفوعات",
+    desc: "اربط n8n مع واتساب بزنس عشان التحقق التلقائي. الموقع بيوفر Webhook endpoint: /api/payment-webhook. لما العميل يرسل الإيصال، n8n يستخرج كود التحويل ويضرب الـ API ويفعّل الاشتراك تلقائياً.",
+    action: "فتح n8n",
+    url: "https://n8n.io",
+    fields: [
+      { key: "Webhook URL", label: "Endpoint", copy: "https://contentalchemy.com/api/payment-webhook" },
+      { key: "Method", label: "طريقة الطلب", copy: "POST" },
+      { key: "Body", label: "الجسم", copy: '{ "action": "verify", "transactionRef": "CA-XXX", "phoneNumber": "010XXX" }' },
+    ],
+  },
+  {
     icon: <Check className="w-6 h-6" />,
-    title: "7. الموقع جاهز! 🎉",
-    desc: "بعد إضافة المتغيرات وتشغيل الـ Migration، سيكون الموقع جاهزاً بالكامل. اشحن رصيدك وابدأ في جني الأرباح!",
+    title: "8. الموقع جاهز! 🎉",
+    desc: "بعد كل الخطوات، موقع ContentAlchemy جاهز بالكامل. اشحن رصيدك وابدأ في جني الأرباح!",
     action: "زيارة الموقع",
     url: "https://contentalchemy.vercel.app",
     fields: [],
