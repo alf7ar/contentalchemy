@@ -56,9 +56,19 @@ const steps = [
     fields: [],
   },
   {
+    icon: <Database className="w-6 h-6" />,
+    title: "6. تشغيل SQL Migration في Supabase",
+    desc: "في Supabase Dashboard، اذهب إلى SQL Editor والصق محتوى ملف supabase/migrations/001_init.sql. هذا سينشئ جداول الاشتراكات والاستخدام ويدعم نظام الدفع.",
+    action: "افتح SQL Editor",
+    url: "https://supabase.com/dashboard/project/_/sql/new",
+    fields: [
+      { key: "Migration", label: "الملف", copy: "supabase/migrations/001_init.sql" },
+    ],
+  },
+  {
     icon: <Check className="w-6 h-6" />,
-    title: "6. الموقع جاهز! 🎉",
-    desc: "بعد إضافة المتغيرات، سينشر Vercel الموقع تلقائياً. يمكنك البدء في جني الأرباح فوراً عبر Instapay.",
+    title: "7. الموقع جاهز! 🎉",
+    desc: "بعد إضافة المتغيرات وتشغيل الـ Migration، سيكون الموقع جاهزاً بالكامل. اشحن رصيدك وابدأ في جني الأرباح!",
     action: "زيارة الموقع",
     url: "https://contentalchemy.vercel.app",
     fields: [],

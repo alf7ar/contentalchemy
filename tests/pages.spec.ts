@@ -145,4 +145,16 @@ test.describe("Footer navigation", () => {
     await expect(page.locator("footer a[href*='/ar/terms']")).toBeVisible()
     await expect(page.locator("footer a[href*='/ar/privacy']")).toBeVisible()
   })
+
+  test("footer should have blog link", async ({ page }) => {
+    await page.goto("/ar")
+    await expect(page.locator("footer a[href*='/ar/blog']")).toBeVisible()
+  })
+})
+
+test.describe("Admin page", () => {
+  test("should show unauthorized without auth", async ({ page }) => {
+    await page.goto("/ar/admin")
+    await expect(page.locator("h1")).toContainText("غير مصرح")
+  })
 })
