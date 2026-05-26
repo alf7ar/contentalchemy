@@ -75,6 +75,28 @@ test.describe("404 page", () => {
   })
 })
 
+test.describe("Referral page", () => {
+  test("should render referral page in Arabic", async ({ page }) => {
+    await page.goto("/ar/refer")
+    await expect(page.locator("h1")).toContainText("برنامج الدعوة")
+  })
+
+  test("should render referral page in English", async ({ page }) => {
+    await page.goto("/en/refer")
+    await expect(page.locator("h1")).toContainText("Referral Program")
+  })
+
+  test("should have copy button", async ({ page }) => {
+    await page.goto("/ar/refer")
+    await expect(page.locator("button", { hasText: "نسخ" })).toBeVisible()
+  })
+
+  test("should have WhatsApp share CTA", async ({ page }) => {
+    await page.goto("/ar/refer")
+    await expect(page.locator("button", { hasText: "شارك على واتساب" })).toBeVisible()
+  })
+})
+
 test.describe("Footer navigation", () => {
   test("footer should have features link", async ({ page }) => {
     await page.goto("/ar")
