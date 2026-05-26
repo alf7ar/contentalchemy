@@ -92,7 +92,7 @@ export default async function LocaleLayout({
           }}
         />
       </head>
-      <body className={`min-h-screen flex flex-col font-sans antialiased`}>
+      <body className={`min-h-screen flex flex-col font-sans antialiased page-enter`}>
         <NextIntlClientProvider messages={messages}>
           {children}
         </NextIntlClientProvider>
