@@ -35,8 +35,8 @@ export default function Footer() {
           <div>
             <h4 className="font-semibold text-gray-900 mb-3">قانوني</h4>
             <div className="flex flex-col gap-2 text-sm text-gray-500">
-              <Link href="#" className="hover:text-primary-600 transition-colors">{t("terms")}</Link>
-              <Link href="#" className="hover:text-primary-600 transition-colors">{t("privacy")}</Link>
+              <Link href={`/${locale}/terms`} className="hover:text-primary-600 transition-colors">{t("terms")}</Link>
+              <Link href={`/${locale}/privacy`} className="hover:text-primary-600 transition-colors">{t("privacy")}</Link>
             </div>
           </div>
         </div>

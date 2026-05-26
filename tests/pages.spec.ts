@@ -75,6 +75,28 @@ test.describe("404 page", () => {
   })
 })
 
+test.describe("Terms & Privacy pages", () => {
+  test("terms page renders in Arabic", async ({ page }) => {
+    await page.goto("/ar/terms")
+    await expect(page.locator("h1")).toContainText("الشروط والأحكام")
+  })
+
+  test("privacy page renders in Arabic", async ({ page }) => {
+    await page.goto("/ar/privacy")
+    await expect(page.locator("h1")).toContainText("سياسة الخصوصية")
+  })
+
+  test("terms page renders in English", async ({ page }) => {
+    await page.goto("/en/terms")
+    await expect(page.locator("h1")).toContainText("Terms")
+  })
+
+  test("privacy page renders in English", async ({ page }) => {
+    await page.goto("/en/privacy")
+    await expect(page.locator("h1")).toContainText("Privacy Policy")
+  })
+})
+
 test.describe("Referral page", () => {
   test("should render referral page in Arabic", async ({ page }) => {
     await page.goto("/ar/refer")
@@ -116,5 +138,11 @@ test.describe("Footer navigation", () => {
   test("footer should have referral link", async ({ page }) => {
     await page.goto("/ar")
     await expect(page.locator("footer a[href*='/ar/refer']")).toBeVisible()
+  })
+
+  test("footer should have terms and privacy links", async ({ page }) => {
+    await page.goto("/ar")
+    await expect(page.locator("footer a[href*='/ar/terms']")).toBeVisible()
+    await expect(page.locator("footer a[href*='/ar/privacy']")).toBeVisible()
   })
 })
