@@ -10,7 +10,6 @@ export function createClient() {
 
 export async function createServerSupabaseClient() {
   const { cookies } = await import("next/headers")
-  const cookieStore = await cookies()
 
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

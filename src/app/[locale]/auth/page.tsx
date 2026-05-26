@@ -3,7 +3,6 @@
 import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { useParams, useSearchParams } from "next/navigation"
-import Link from "next/link"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 

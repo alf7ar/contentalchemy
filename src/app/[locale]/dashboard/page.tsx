@@ -2,14 +2,12 @@
 
 import { useState } from "react"
 import { useTranslations } from "next-intl"
-import { useParams } from "next/navigation"
 type Platform = "instagram" | "facebook" | "tiktok" | "linkedin" | "ads"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import {
   Sparkles, Copy, Check, RefreshCw,
-  Camera, Share2, Video, Users, Megaphone, LoaderCircle,
-  Zap, TrendingUp, Clock, BarChart3, Plus,
+  Camera, Share2, Video, Users, Megaphone, LoaderCircle, BarChart3,
 } from "lucide-react"
 
 const platformIcons: Record<Platform, React.ReactNode> = {
@@ -37,9 +35,6 @@ interface GeneratedContent {
 
 export default function DashboardPage() {
   const t = useTranslations("dashboard")
-  const params = useParams()
-  const locale = params.locale as string
-
   const [topic, setTopic] = useState("")
   const [businessName, setBusinessName] = useState("")
   const [businessType, setBusinessType] = useState("")
@@ -239,7 +234,7 @@ export default function DashboardPage() {
                     <Sparkles className="w-10 h-10 text-primary-600" />
                   </div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">{t("no_content")}</h3>
-                  <p className="text-gray-500">اكتب موضوعاً في الجهة اليسرى وانقر على "{t("generate_btn")}"</p>
+                  <p className="text-gray-500">اكتب موضوعاً في الجهة اليسرى وانقر على &ldquo;{t("generate_btn")}&rdquo;</p>
                 </div>
               ) : (
                 <div className="space-y-6">

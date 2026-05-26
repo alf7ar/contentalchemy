@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server"
 import Link from "next/link"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
-import { Sparkles, Camera, Share2, Video, Users, TrendingUp, Zap, Clock, Shield } from "lucide-react"
+import { Sparkles, Camera, TrendingUp, Zap, Clock, Shield } from "lucide-react"
 
 export async function generateMetadata({
   params,

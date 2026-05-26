@@ -1,6 +1,5 @@
 "use client"
 
-import { useParams } from "next/navigation"
 import { Check, Copy, ExternalLink, Settings, Globe, Database, Smartphone } from "lucide-react"
 import { useState } from "react"
 import Navbar from "@/components/Navbar"
@@ -67,8 +66,6 @@ const steps = [
 ]
 
 export default function SetupPage() {
-  const params = useParams()
-  const locale = params.locale as string
   const [copiedKey, setCopiedKey] = useState<string | null>(null)
 
   const copyToClipboard = async (text: string, key: string) => {

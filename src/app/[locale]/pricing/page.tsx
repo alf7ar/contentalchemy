@@ -6,7 +6,7 @@ import { useParams } from "next/navigation"
 import Link from "next/link"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
-import { Check, X, Copy, CheckCircle, Smartphone, CreditCard, ArrowLeft } from "lucide-react"
+import { Check, X, Copy, CheckCircle, Smartphone } from "lucide-react"
 import { PLANS, getInstapayInstructions, type PlanId } from "@/lib/payment"
 
 export default function PricingPage() {
