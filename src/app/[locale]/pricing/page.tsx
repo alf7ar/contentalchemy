@@ -254,6 +254,62 @@ export default function PricingPage() {
               ))}
             </div>
 
+            {/* Comparison Table */}
+            <div className="mt-20">
+              <h2 className="text-3xl font-bold text-gray-900 text-center mb-4">مقارنة الباقات</h2>
+              <p className="text-gray-500 text-center mb-10">شوف الفرق بين الباقات واختار اللي يناسبك</p>
+              <div className="overflow-x-auto">
+                <table className="w-full max-w-4xl mx-auto bg-white rounded-3xl border border-gray-200 overflow-hidden shadow-sm">
+                  <thead>
+                    <tr className="bg-gray-50 border-b border-gray-200">
+                      <th className="text-right py-4 px-6 font-semibold text-gray-900 w-1/3">الميزة</th>
+                      {plans.map((plan, i) => (
+                        <th key={i} className={`text-center py-4 px-4 font-semibold ${plan.popular ? 'text-primary-700' : 'text-gray-900'}`}>
+                          {plan.name}
+                          {plan.popular && <span className="block text-xs text-primary-500 font-normal mt-1">الأكثر طلباً</span>}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      { label: "المحتوى الشهري", values: ["10 محتوى", "50 محتوى", "200 محتوى", "غير محدود"] },
+                      { label: "عدد المنصات", values: ["3 منصات", "6 منصات", "6 منصات", "6 منصات"] },
+                      { label: "النغمات", values: ["3 نغمات", "5 نغمات", "7 نغمات", "7 نغمات"] },
+                      { label: "اللهجة المصرية", values: ["✓", "✓", "✓", "✓"] },
+                      { label: "هاشتاجات ذكية", values: ["✓", "✓", "✓", "✓"] },
+                      { label: "مشاركة واتساب", values: ["✓", "✓", "✓", "✓"] },
+                      { label: "إعادة إنشاء", values: ["✗", "✓", "✓", "✓"] },
+                      { label: "تاريخ المحتوى", values: ["آخر 5", "آخر 20", "غير محدود", "غير محدود"] },
+                      { label: "دعم فني", values: ["—", "إيميل", "إيميل + واتساب", "أولوية قصوى"] },
+                    ].map((row, i) => (
+                      <tr key={i} className={`border-b border-gray-100 ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}>
+                        <td className="py-3.5 px-6 text-sm font-medium text-gray-800">{row.label}</td>
+                        {row.values.map((val, j) => {
+                          const isCheck = val === "✓"
+                          const isCross = val === "✗"
+                          const isDash = val === "—"
+                          return (
+                            <td key={j} className={`text-center py-3.5 px-4 text-sm ${plans[j].popular ? 'font-medium' : ''}`}>
+                              {isCheck ? (
+                                <Check className="w-5 h-5 text-green-500 mx-auto" />
+                              ) : isCross ? (
+                                <X className="w-5 h-5 text-gray-300 mx-auto" />
+                              ) : isDash ? (
+                                <span className="text-gray-300">—</span>
+                              ) : (
+                                <span className={plans[j].popular ? 'text-primary-700' : 'text-gray-600'}>{val}</span>
+                              )}
+                            </td>
+                          )
+                        })}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
             <div className="mt-16 text-center">
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-50 text-green-700 rounded-full text-sm font-medium">
                 <Smartphone className="w-4 h-4" />

@@ -42,6 +42,6 @@ test.describe("Pricing Page", () => {
 
   test("Most popular badge is shown on Pro plan", async ({ page }) => {
     await page.goto("/ar/pricing")
-    await expect(page.locator("text=الأكثر طلباً")).toBeVisible()
+    await expect(page.locator("text=الأكثر طلباً").first()).toBeVisible()
   })
 })
