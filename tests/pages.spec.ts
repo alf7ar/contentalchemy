@@ -112,4 +112,9 @@ test.describe("Footer navigation", () => {
     await page.goto("/ar")
     await expect(page.locator("footer a[href*='/ar/pricing']")).toBeVisible()
   })
+
+  test("footer should have referral link", async ({ page }) => {
+    await page.goto("/ar")
+    await expect(page.locator("footer a[href*='/ar/refer']")).toBeVisible()
+  })
 })
