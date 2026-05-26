@@ -2,6 +2,7 @@ import { useTranslations } from "next-intl"
 import { getTranslations } from "next-intl/server"
 import Link from "next/link"
 import Navbar from "@/components/Navbar"
+import NewsletterSignup from "@/components/NewsletterSignup"
 import Footer from "@/components/Footer"
 import { Sparkles, Camera, TrendingUp, Zap, Clock, Shield, Star, ChevronLeft, Share2, Video, Users, Megaphone } from "lucide-react"
 
@@ -62,6 +63,7 @@ export default function HomePage() {
         <HowItWorksSection />
         <TestimonialsSection />
         <FAQSection />
+        <NewsletterSignup />
         <CTASection />
       </main>
       <Footer />
