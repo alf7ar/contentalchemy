@@ -6,7 +6,7 @@ import { useParams } from "next/navigation"
 import Link from "next/link"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
-import { Check, X, Copy, CheckCircle, Smartphone } from "lucide-react"
+import { Check, X, Copy, CheckCircle, Smartphone, Shield } from "lucide-react"
 import { PLANS, getInstapayInstructions, type PlanId } from "@/lib/payment"
 
 export default function PricingPage() {
@@ -150,7 +150,15 @@ export default function PricingPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
               <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">{t("title")}</h1>
-              <p className="text-xl text-gray-500">{t("subtitle")}</p>
+              <p className="text-xl text-gray-500 mb-4">{t("subtitle")}</p>
+              {/* Trust badges */}
+              <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
+                <span className="flex items-center gap-1"><Smartphone className="w-4 h-4 text-green-600" /> دفع عبر Instapay</span>
+                <span className="text-gray-300">•</span>
+                <span className="flex items-center gap-1"><Shield className="w-4 h-4 text-green-600" /> بدون بطاقة ائتمان</span>
+                <span className="text-gray-300">•</span>
+                <span className="flex items-center gap-1"><Check className="w-4 h-4 text-green-600" /> إلغاء في أي وقت</span>
+              </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {plans.map((plan) => (

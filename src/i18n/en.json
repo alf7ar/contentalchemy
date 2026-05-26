@@ -94,6 +94,8 @@
     "signup_btn": "Sign Up",
     "no_account": "Don't have an account?",
     "has_account": "Already have an account?",
+    "login": "Login",
+    "signup": "Sign Up",
     "or": "Or",
     "google": "Continue with Google"
   },

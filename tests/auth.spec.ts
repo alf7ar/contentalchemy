@@ -16,7 +16,7 @@ test.describe("Auth Page", () => {
 
   test("Toggle between login and signup", async ({ page }) => {
     await page.goto("/ar/auth")
-    const toggleButton = page.locator("button", { hasText: "تسجيل الدخول" })
+    const toggleButton = page.locator("p button", { hasText: "تسجيل الدخول" })
     await expect(toggleButton).toBeVisible()
   })
 

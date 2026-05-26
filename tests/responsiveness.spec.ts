@@ -7,7 +7,7 @@ test.describe("Mobile Responsiveness", () => {
     await page.goto("/ar")
     await expect(page.locator("h1")).toBeVisible()
     await page.locator('[class*="md:hidden"]').first().click()
-    await expect(page.getByRole("link", { name: "الباقات" })).toBeVisible()
+    await expect(page.getByRole("link", { name: "الباقات" }).first()).toBeVisible()
   })
 
   test("Pricing page stacks properly on mobile", async ({ page }) => {
