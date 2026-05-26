@@ -14,14 +14,28 @@ export default function NewsletterSignup() {
     setLoading(true)
 
     try {
-      // Store in localStorage for now (will connect to email service later)
-      const existing = JSON.parse(localStorage.getItem("contentalchemy_emails") || "[]")
-      existing.push({ email: email.trim(), date: new Date().toISOString() })
-      localStorage.setItem("contentalchemy_emails", JSON.stringify(existing))
-      setStatus("success")
-      setEmail("")
+      const res = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim(), source: "landing-page" }),
+      })
+      if (res.ok) {
+        setStatus("success")
+        setEmail("")
+      } else {
+        setStatus("error")
+      }
     } catch {
-      setStatus("error")
+      // Fallback to localStorage
+      try {
+        const existing = JSON.parse(localStorage.getItem("contentalchemy_emails") || "[]")
+        existing.push({ email: email.trim(), date: new Date().toISOString() })
+        localStorage.setItem("contentalchemy_emails", JSON.stringify(existing))
+        setStatus("success")
+        setEmail("")
+      } catch {
+        setStatus("error")
+      }
     } finally {
       setLoading(false)
       setTimeout(() => setStatus("idle"), 4000)

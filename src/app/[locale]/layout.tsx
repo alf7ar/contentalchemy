@@ -66,6 +66,31 @@ export default async function LocaleLayout({
           href="https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&display=swap"
           rel="stylesheet"
         />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "SoftwareApplication",
+              name: "ContentAlchemy",
+              applicationCategory: "BusinessApplication",
+              operatingSystem: "Web",
+              description: locale === "ar"
+                ? "أداة متكاملة لإنشاء محتوى السوشيال ميديا بالعربية والإنجليزية باستخدام الذكاء الاصطناعي"
+                : "AI-powered social media content generator for Arabic and English content",
+              offers: {
+                "@type": "Offer",
+                price: "0",
+                priceCurrency: "EGP",
+                availability: "https://schema.org/InStock",
+              },
+              author: {
+                "@type": "Organization",
+                name: "ContentAlchemy",
+              },
+            }),
+          }}
+        />
       </head>
       <body className={`min-h-screen flex flex-col font-sans antialiased`}>
         <NextIntlClientProvider messages={messages}>
