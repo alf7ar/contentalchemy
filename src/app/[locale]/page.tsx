@@ -51,9 +51,19 @@ const faqs = [
   { q: "هل ينفع للشركات الكبيرة؟", a: "طبعاً! عندنا باقات للوكالات والشركات الكبيرة بعدد منشورات غير محدود." },
 ]
 
+function PromoBanner() {
+  return (
+    <div className="bg-gradient-to-r from-primary-600 via-primary-700 to-accent-600 text-white text-center py-2.5 px-4 text-sm font-medium">
+      <span>🔥 عرض خاص: أول ١٠٠ مشترك يحصلوا على خصم ٥٠٪ على جميع الباقات! </span>
+      <span className="hidden sm:inline">استخدم الكود: LAUNCH50</span>
+    </div>
+  )
+}
+
 export default function HomePage() {
   return (
     <>
+      <PromoBanner />
       <Navbar />
       <main>
         <HeroSection />

@@ -38,7 +38,7 @@ export default function DashboardPage() {
   const [topic, setTopic] = useState("")
   const [businessName, setBusinessName] = useState("")
   const [businessType, setBusinessType] = useState("")
-  const [tone, setTone] = useState<"professional" | "casual" | "luxury" | "funny">("professional")
+  const [tone, setTone] = useState<"professional" | "casual" | "luxury" | "funny" | "edgy" | "inspirational" | "educational">("professional")
   const [generating, setGenerating] = useState(false)
   const [results, setResults] = useState<GeneratedContent[]>([])
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null)
@@ -215,6 +215,9 @@ export default function DashboardPage() {
                       <option value="casual">{t("tone_casual")}</option>
                       <option value="luxury">{t("tone_luxury")}</option>
                       <option value="funny">{t("tone_funny")}</option>
+                      <option value="edgy">{t("tone_edgy")}</option>
+                      <option value="inspirational">{t("tone_inspirational")}</option>
+                      <option value="educational">{t("tone_educational")}</option>
                     </select>
                   </div>
 
