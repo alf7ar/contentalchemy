@@ -2,9 +2,11 @@
 
 import { useState } from "react"
 import { useTranslations } from "next-intl"
-type Platform = "instagram" | "facebook" | "tiktok" | "linkedin" | "ads"
+import { useParams } from "next/navigation"
+import Link from "next/link"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
+type Platform = "instagram" | "facebook" | "tiktok" | "linkedin" | "ads"
 import {
   Sparkles, Copy, Check, RefreshCw,
   Camera, Share2, Video, Users, Megaphone, LoaderCircle, BarChart3, MessageCircle,
@@ -35,6 +37,8 @@ interface GeneratedContent {
 
 export default function DashboardPage() {
   const t = useTranslations("dashboard")
+  const params = useParams()
+  const locale = params.locale as string
   const [topic, setTopic] = useState("")
   const [businessName, setBusinessName] = useState("")
   const [businessType, setBusinessType] = useState("")
@@ -178,9 +182,14 @@ export default function DashboardPage() {
                   <BarChart3 className="w-6 h-6 text-primary-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">{t("usage")}</p>
+                  <p className="text-sm text-gray-500">
+                    {t("usage")} · <span className="text-primary-600 font-medium">{usageStats.plan}</span>
+                  </p>
                   <p className="text-lg font-semibold text-gray-900">
                     {t("posts_used")} {usageStats.used} {t("out_of")} {usageStats.total} {t("posts")}
+                  </p>
+                  <p className="text-xs text-gray-400 mt-0.5">
+                    {locale === "ar" ? `متبقي ${usageStats.total - usageStats.used} محتوى` : `${usageStats.total - usageStats.used} remaining`}
                   </p>
                 </div>
               </div>
@@ -191,9 +200,12 @@ export default function DashboardPage() {
                     style={{ width: `${(usageStats.used / usageStats.total) * 100}%` }}
                   />
                 </div>
-                <button className="px-4 py-2 bg-primary-600 text-white rounded-xl hover:bg-primary-700 text-sm font-medium transition-colors">
+                <Link
+                  href={`/${locale}/pricing`}
+                  className="px-4 py-2 bg-primary-600 text-white rounded-xl hover:bg-primary-700 text-sm font-medium transition-colors inline-flex items-center gap-1"
+                >
                   {t("upgrade")}
-                </button>
+                </Link>
               </div>
             </div>
           </div>
