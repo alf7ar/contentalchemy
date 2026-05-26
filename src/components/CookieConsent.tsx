@@ -13,9 +13,9 @@ export default function CookieConsent() {
 
   useEffect(() => {
     const consent = localStorage.getItem("cookie-consent")
+    // Safe one-time read from localStorage on mount; not a cascading-render issue
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (!consent) setVisible(true)
-  // Safe one-time read from localStorage on mount; not a cascading-render issue
-  // eslint-disable-next-line react-hooks/set-state-in-effect
   }, [])
 
   const accept = () => {

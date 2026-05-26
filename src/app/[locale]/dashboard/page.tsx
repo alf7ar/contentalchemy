@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useTranslations } from "next-intl"
 import { useParams } from "next/navigation"
 import Link from "next/link"
@@ -47,12 +47,26 @@ export default function DashboardPage() {
   const [results, setResults] = useState<GeneratedContent[]>([])
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null)
   const [selectedPlatform, setSelectedPlatform] = useState<Platform | "all">("all")
+  const [usageData, setUsageData] = useState<{
+    used: number
+    limit: number
+    remaining: number
+    plan: string
+    isPro: boolean
+  } | null>(null)
+  const [apiError, setApiError] = useState<string | null>(null)
 
-  const usageStats = {
-    used: 3,
-    total: 50,
-    plan: "Starter",
-  }
+  // Fetch usage on mount
+  useEffect(() => {
+    fetch("/api/user")
+      .then(r => r.json())
+      .then(data => {
+        if (data.usage) {
+          setUsageData(data.usage)
+        }
+      })
+      .catch(() => {})
+  }, [])
 
   const copyToClipboard = async (text: string, index: number) => {
     await navigator.clipboard.writeText(text)
@@ -102,7 +116,10 @@ export default function DashboardPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ platform, topic, businessName, businessType, tone }),
       })
-      if (!res.ok) throw new Error("API error")
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}))
+        throw new Error(errData.error || "API error")
+      }
       const data = await res.json() as { title: string; content: string; hashtags: string[] }
       const newResult: GeneratedContent = { platform, title: data.title, content: data.content, hashtags: data.hashtags }
       // Replace the result for this platform
@@ -110,6 +127,7 @@ export default function DashboardPage() {
       saveToHistory([newResult])
     } catch (error) {
       console.error("Regeneration error:", error)
+      setApiError((error as Error).message || (locale === "ar" ? "حدث خطأ" : "An error occurred"))
     } finally {
       setGenerating(false)
     }
@@ -120,15 +138,22 @@ export default function DashboardPage() {
     if (!topic.trim()) return
     setGenerating(true)
     setResults([])
+    setApiError(null)
 
-    const callApi = async (platform: Platform) => {
+    const callApi = async (platform: Platform): Promise<{ title: string; content: string; hashtags: string[] }> => {
       const res = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ platform, topic, businessName, businessType, tone }),
       })
-      if (!res.ok) throw new Error("API error")
-      return res.json() as Promise<{ title: string; content: string; hashtags: string[] }>
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}))
+        const err = new Error(errData.error || "API error") as Error & { code?: string; usage?: unknown }
+        err.code = errData.code
+        err.usage = errData.usage
+        throw err
+      }
+      return res.json()
     }
 
     try {
@@ -146,8 +171,14 @@ export default function DashboardPage() {
       }
       setResults(newResults)
       saveToHistory(newResults)
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Generation error:", error)
+      const err = error as Error & { code?: string }
+      if (err.code === "USAGE_LIMIT_REACHED") {
+        setApiError(err.message || (locale === "ar" ? "لقد استنفدت حدك الشهري" : "Monthly limit reached"))
+      } else {
+        setApiError(err.message || (locale === "ar" ? "حدث خطأ في الإنشاء" : "Generation error"))
+      }
     } finally {
       setGenerating(false)
     }
@@ -189,21 +220,31 @@ export default function DashboardPage() {
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">
-                    {t("usage")} · <span className="text-primary-600 font-medium">{usageStats.plan}</span>
+                    {t("usage")} · <span className="text-primary-600 font-medium">{usageData?.plan || "Free"}</span>
                   </p>
-                  <p className="text-lg font-semibold text-gray-900">
-                    {t("posts_used")} {usageStats.used} {t("out_of")} {usageStats.total} {t("posts")}
-                  </p>
-                  <p className="text-xs text-gray-400 mt-0.5">
-                    {locale === "ar" ? `متبقي ${usageStats.total - usageStats.used} محتوى` : `${usageStats.total - usageStats.used} remaining`}
-                  </p>
+                  {usageData?.isPro ? (
+                    <p className="text-lg font-semibold text-green-700">
+                      {locale === "ar" ? "غير محدود 🎉" : "Unlimited 🎉"}
+                    </p>
+                  ) : (
+                    <>
+                      <p className="text-lg font-semibold text-gray-900">
+                        {t("posts_used")} {usageData?.used ?? 0} {t("out_of")} {usageData?.limit ?? 3} {t("posts")}
+                      </p>
+                      <p className="text-xs text-gray-400 mt-0.5">
+                        {locale === "ar"
+                          ? `متبقي ${usageData?.remaining ?? 0} محتوى`
+                          : `${usageData?.remaining ?? 0} remaining`}
+                      </p>
+                    </>
+                  )}
                 </div>
               </div>
               <div className="flex items-center gap-3">
                 <div className="h-2 w-32 bg-gray-100 rounded-full overflow-hidden">
                   <div
                     className="h-full bg-primary-600 rounded-full transition-all"
-                    style={{ width: `${(usageStats.used / usageStats.total) * 100}%` }}
+                    style={{ width: `${((usageData?.used ?? 0) / Math.max(usageData?.limit ?? 3, 1)) * 100}%` }}
                   />
                 </div>
                 <Link
@@ -291,6 +332,13 @@ export default function DashboardPage() {
                       placeholder={t("input_placeholder")}
                     />
                   </div>
+
+                  {apiError && (
+                    <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
+                      {apiError}
+                      <button onClick={() => setApiError(null)} className="mr-2 text-red-500 hover:text-red-700">✕</button>
+                    </div>
+                  )}
 
                   <button
                     onClick={handleGenerateWithHistory}
