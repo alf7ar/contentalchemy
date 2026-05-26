@@ -399,6 +399,228 @@ In a recent study, Egyptian dialect content gets 70% more engagement than formal
 
 ContentAlchemy specializes in Egyptian dialect. We don't write formal Arabic. We write like Egyptians talk.`,
   },
+  {
+    slug: "استراتيجية-تسويق-محتوى-للمطاعم-في-مصر",
+    title: "استراتيجية تسويق محتوى للمطاعم في مصر: دليلك لزيادة العملاء",
+    titleEn: "Content Marketing Strategy for Restaurants in Egypt: Your Guide to More Customers",
+    description: "ازاي تسوق لمطعمك على السوشيال ميديا في مصر. استراتيجيات محتوى للمطاعم والكافيهات تجذب العملاء وتزود المبيعات.",
+    descriptionEn: "How to market your restaurant on social media in Egypt. Content strategies for restaurants and cafes that attract customers and boost sales.",
+    keywords: ["تسويق مطاعم مصر", "محتوى مطاعم", "تسويق مطاعم سوشيال ميديا", "جذب عملاء مطاعم", "دليل تسويق مطاعم"],
+    date: "2026-05-22",
+    readTime: "7 دقائق",
+    author: "فريق ContentAlchemy",
+    content: `# استراتيجية تسويق محتوى للمطاعم في مصر
+
+المطاعم والكافيهات في مصر بتواجه منافسة شرسة. المحتوى الصح يقدر يفرق.
+
+## ليه المحتوى مهم للمطاعم؟
+الناس بتاكل بعيونها قبل فمها. صور وفيديوهات الأكل الجذابة هي اللي بتخلي العميل يختار مطعمك.
+
+## أنواع المحتوى الفعالة للمطاعم
+
+### 1. صور الأكل
+استخدم صور عالية الجودة للأكل. الناس بتحب تشوف الأكل قبل ما تجرب.
+
+### 2. فيديوهات الطهي
+اعمل فيديوهات قصيرة لطريقة تحضير الأطباق. المحتوى ده بينتشر بسرعة على تيك توك وانستغرام.
+
+### 3. عروض اليوم
+انشر عروضك اليومية على القصص (Stories). "عرض النهاردة: اشترِ 2 وادفع 1".
+
+### 4. آراء العملاء
+شارك آراء العملاء السعيدة. الناس بتثق في تجارب الناس التانية.
+
+## ContentAlchemy للمطاعم
+اكتب وصفة أو نوع الأكل وContentAlchemy هيعملك محتوى متكامل لكل المنصات.`,
+    contentEn: `# Content Marketing Strategy for Restaurants in Egypt
+
+Restaurants and cafes in Egypt face fierce competition. The right content can make the difference.
+
+ContentAlchemy helps you create professional restaurant content for all platforms.`,
+  },
+  {
+    slug: "تسويق-رمضان-2026-السوشيال-ميديا",
+    title: "دليل تسويق رمضان 2026 على السوشيال ميديا في مصر",
+    titleEn: "Ramadan 2026 Social Media Marketing Guide in Egypt",
+    description: "استراتيجيات تسويق رمضان على السوشيال ميديا في مصر. ازاي تستعد لشهر رمضان وتزود مبيعاتك.",
+    descriptionEn: "Ramadan marketing strategies on social media in Egypt. How to prepare for Ramadan and boost your sales.",
+    keywords: ["تسويق رمضان", "رمضان 2026", "محتوى رمضان", "تسويق رمضان مصر", "سوشيال ميديا رمضان"],
+    date: "2026-05-20",
+    readTime: "8 دقائق",
+    author: "فريق ContentAlchemy",
+    content: `# دليل تسويق رمضان 2026 على السوشيال ميديا في مصر
+
+رمضان في مصر مش مجرد شهر - ده موسم تجاري ضخم. الاستعداد لرمضان يبدأ من بدري.
+
+## ليه رمضان مهم للتسويق؟
+في رمضان، المصريين بيقضوا وقت أطول على السوشيال ميديا. معدل المشاهدة والتفاعل بيلحق أعلى مستوياته.
+
+## استراتيجيات محتوى رمضان
+
+### محتوى قبل رمضان
+- "استعد لرمضان": نصائح للاستعداد للشهر الفضيل
+- وصفات رمضانية: ابدأ بنشر وصفات قبل رمضان بأسبوعين
+- عروض مبكرة: "احجز قبل رمضان ووفر ٢٠٪"
+
+### محتوى خلال رمضان
+- محتوى ما قبل الإفطار: وصفات سريعة، نصائح للطهي
+- محتوى بعد الإفطار: عروض مسائية، محتوى ترفيهي
+- مسابقات وتفاعل: "أفضل سفرة رمضانية" - خلي الناس تشارك
+
+### محتوى بعد رمضان
+- "إزاي تحافظ على الزبائن بعد رمضان"
+- عروض العيد
+
+## ContentAlchemy في رمضان
+جرب ContentAlchemy عشان تولد محتوى رمضاني احترافي باللهجة المصرية.`,
+    contentEn: `# Ramadan 2026 Social Media Marketing Guide in Egypt
+
+Ramadan in Egypt is not just a month - it's a massive commercial season. Preparation starts early.
+
+ContentAlchemy helps you create professional Ramadan content in Egyptian dialect.`,
+  },
+  {
+    slug: "أخطاء-محتوى-سوشيال-ميديا-في-مصر",
+    title: "7 أخطاء شائعة في محتوى السوشيال ميديا في مصر (وإزاي تتجنبها)",
+    titleEn: "7 Common Social Media Content Mistakes in Egypt (And How to Avoid Them)",
+    description: "أكتر 7 أخطاء بتقع فيها الشركات المصرية في محتوى السوشيال ميديا. تعلم تتجنبها وتزود تفاعلك ومبيعاتك.",
+    descriptionEn: "The 7 most common mistakes Egyptian businesses make in social media content. Learn to avoid them and boost your engagement and sales.",
+    keywords: ["أخطاء سوشيال ميديا", "تجنب أخطاء التسويق", "أخطاء المحتوى", "نصائح سوشيال ميديا مصر", "تسويق احترافي"],
+    date: "2026-05-17",
+    readTime: "7 دقائق",
+    author: "فريق ContentAlchemy",
+    content: `# 7 أخطاء شائعة في محتوى السوشيال ميديا في مصر
+
+كتير من الشركات المصرية بتقع في نفس الأخطاء. تعالى نتعرف عليها ونتجنبها.
+
+## الخطأ 1: استخدام الفصحى بدل العامية
+الناس في مصر عايزة تكلمها بمصري. الفصحى بتخلي المحتوى بعيد والناس مش بتتفاعل.
+
+الحل: استخدم ContentAlchemy اللي بيكتبلك باللهجة المصرية تلقائياً.
+
+## الخطأ 2: النشر بدون خطة
+بتنشر لما تفتكر مش لما يكون عندك خطة. المحتوى العشوائي مش بيجيب نتيجة.
+
+## الخطأ 3: تجاهل التفاعل
+العميل لما يعلق أو يسأل، رد عليه. الفيسبوك بيديك priority لو انت بتتفاعل.
+
+## الخطأ 4: محتوى طويل ممل
+الناس مش بتقرأ باراجرافات طويلة. خلي الكلام قصير ومختصر.
+
+## الخطأ 5: إهمال الهاشتاجات
+الهاشتاجات بتزود الوصول. استخدم هاشتاجات مصرية مناسبة.
+
+## الخطأ 6: التصميم الضعيف
+الصور الرديئة بتأذي الثقة في علامتك التجارية.
+
+## الخطأ 7: عدم التحليل
+لو مش بتتابع أداء محتواك، مش هتعرف إيه اللي شغال وإيه اللي لأ.`,
+    contentEn: `# 7 Common Social Media Content Mistakes in Egypt
+
+Many Egyptian businesses make the same mistakes. Let's learn about them and avoid them.
+
+ContentAlchemy helps you avoid all these mistakes with professional AI-powered content.`,
+  },
+  {
+    slug: "ازاي-تبدأ-مشروع-تسويق-الكتروني-في-مصر",
+    title: "ازاي تبدأ مشروع تسويق إلكتروني في مصر من الصفر",
+    titleEn: "How to Start a Digital Marketing Business in Egypt from Scratch",
+    description: "دليلك الشامل لبدء مشروع تسويق إلكتروني في مصر. ازاي تبدأ من الصفر وتجيب عملاء وتحقق دخل ثابت.",
+    descriptionEn: "Your complete guide to starting a digital marketing business in Egypt. How to start from scratch, find clients, and earn steady income.",
+    keywords: ["بدء مشروع تسويق إلكتروني", "تسويق إلكتروني مصر", "مشروع من الصفر", "عمل حر مصر", "فريلانس مصر"],
+    date: "2026-05-15",
+    readTime: "10 دقائق",
+    author: "فريق ContentAlchemy",
+    content: `# ازاي تبدأ مشروع تسويق إلكتروني في مصر من الصفر
+
+التسويق الإلكتروني في مصر بيشهد طلب كبير. كل شركة عايزة تكون موجودة على السوشيال ميديا.
+
+## ليه التسويق الإلكتروني؟
+- الطلب كبير وكل يوم بيزيد
+- مكسبه عالي مقارنة بمجالات تانية
+- تقدر تشتغل من البيت
+
+## الخطوات
+
+### 1. تعلم الأساسيات
+في كورسات كتير مجانية على يوتيوب. اتعلم:
+- أساسيات السوشيال ميديا ماركتنج
+- كتابة المحتوى
+- التصميم (Canva)
+
+### 2. اختار تخصصك
+متشتتش نفسك. اختار حاجة واحدة:
+- محتوى سوشيال ميديا (الأسهل والأكتر طلباً)
+- إعلانات فيسبوك
+- تحسين محركات البحث (SEO)
+
+### 3. اعمل portfolio
+اشتغل على 3-5 مشاريع مجانية عشان تعمل لك portfolio.
+
+### 4. سوق لنفسك
+- اعمل صفحة فيسبوك واحترافية
+- انشر محتوى قيم
+
+## ContentAlchemy كأداة
+ContentAlchemy هيساعدك تقدم محتوى احترافي لعملائك بسرعة، وده هيزود ثقتهم فيك.`,
+    contentEn: `# How to Start a Digital Marketing Business in Egypt from Scratch
+
+Digital marketing in Egypt is seeing huge demand. Every business wants to be on social media.
+
+ContentAlchemy helps you deliver professional content to your clients quickly.`,
+  },
+  {
+    slug: "افضل-تطبيقات-الذكاء-الاصطناعي-للتسويق-2026",
+    title: "أفضل 10 تطبيقات ذكاء اصطناعي للتسويق في 2026",
+    titleEn: "Top 10 AI Applications for Marketing in 2026",
+    description: "قائمة بأفضل تطبيقات وتجميعات الذكاء الاصطناعي للتسويق في 2026. أدوات تغير طريقة التسويق الرقمي.",
+    descriptionEn: "A list of the best AI applications and tools for marketing in 2026. Tools that change the way digital marketing works.",
+    keywords: ["تطبيقات AI تسويق", "أدوات ذكاء اصطناعي", "AI للتسويق 2026", "تجميعات AI", "أدوات تسويق رقمية"],
+    date: "2026-05-12",
+    readTime: "9 دقائق",
+    author: "فريق ContentAlchemy",
+    content: `# أفضل 10 تطبيقات ذكاء اصطناعي للتسويق في 2026
+
+الذكاء الاصطناعي غير طريقة التسويق. تعالى نستعرض أفضل الأدوات في 2026.
+
+## 1. ContentAlchemy - للمحتوى العربي
+الأداة المثالية للسوق المصري والعربي. محتوى باللهجة المصرية، 6 منصات، 7 نغمات. وطرق دفع محلية.
+
+## 2. ChatGPT - للمحتوى العام
+مناسب للمحتوى الإنجليزي والعربي الفصيح.
+
+## 3. Midjourney - للصور
+توليد صور تسويقية احترافية.
+
+## 4. Canva AI - للتصميم
+تصميم جرافيك بسهولة مع أدوات AI.
+
+## 5. Jasper AI - للنسخ الإعلانية
+كتابة إعلانات ونصوص تسويقية.
+
+## 6. HubSpot - لإدارة العملاء
+CRM مع أدوات تسويق متكاملة.
+
+## 7. SEMrush - للتحليل
+تحليل المنافسين والكلمات المفتاحية.
+
+## 8. Synthesia - فيديو بالذكاء الاصطناعي
+توليد فيديوهات تسويقية.
+
+## 9. Descript - تحرير فيديو
+تحرير فيديو وبودكاست بالذكاء الاصطناعي.
+
+## 10. Hootsuite - إدارة سوشيال ميديا
+جدولة ونشر المحتوى على منصات متعددة.
+
+## الخلاصة
+كل أداة ليها استخدامها. لكن لو عايز محتوى سوشيال ميديا عربي احترافي، ContentAlchemy هو الخيار الأمثل.`,
+    contentEn: `# Top 10 AI Applications for Marketing in 2026
+
+AI has changed the way marketing works. Let's explore the best tools in 2026.
+
+ContentAlchemy is the ideal tool for the Egyptian and Arabic market - Egyptian dialect, 6 platforms, 7 tones, and local payment methods.`,
+  },
 ]
 
 export function getBlogPost(slug: string): BlogPost | undefined {

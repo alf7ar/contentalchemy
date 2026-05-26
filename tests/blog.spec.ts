@@ -11,7 +11,7 @@ test.describe("Blog", () => {
     await page.goto("/ar/blog")
     const posts = page.locator("a[href*='/ar/blog/']")
     const count = await posts.count()
-    expect(count).toBeGreaterThanOrEqual(10)
+    expect(count).toBeGreaterThanOrEqual(15)
   })
 
   test("Blog post page loads", async ({ page }) => {
