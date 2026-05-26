@@ -1,20 +1,13 @@
 import { NextRequest, NextResponse } from "next/server"
-import { createPaymentTransaction, verifyPayment } from "@/lib/db"
+import { verifyPayment } from "@/lib/db"
 import { PLANS, generateInstapayRef } from "@/lib/payment"
 import type { PlanId } from "@/lib/payment"
 
 /**
  * n8n Payment Webhook
  *
- * This endpoint is called by n8n when a payment is confirmed via WhatsApp.
- * n8n workflow:
- *   1. Watch WhatsApp (Business API) for incoming messages
- *   2. Check if message contains a transaction reference (CA-XXXXXXXX)
- *   3. Extract user phone and transaction ref
- *   4. POST to this endpoint with { transactionRef, phoneNumber }
- *   5. This endpoint verifies and activates the subscription
- *
- * Also accepts POST from the frontend when user initiates a payment
+ * Initiate: Called from frontend when user starts a payment
+ * Verify: Called by n8n when payment is confirmed via WhatsApp
  */
 export async function POST(request: NextRequest) {
   try {
@@ -37,13 +30,22 @@ export async function POST(request: NextRequest) {
 
       const ref = transactionRef || generateInstapayRef()
 
-      await createPaymentTransaction({
-        userId,
-        planId: planId as PlanId,
-        amountEGP: plan.priceEGP,
-        paymentMethod: paymentMethod as "instapay" | "vodafone_cash",
-        transactionRef: ref,
-        phoneNumber,
+      // Store payment intent in content_history
+      const { createClient } = await import("@/lib/supabase")
+      const supabase = createClient()
+      await supabase.from("content_history").insert({
+        user_id: userId,
+        platform: "payment",
+        topic: "payment_intent",
+        content: JSON.stringify({
+          type: "payment",
+          plan_id: planId,
+          payment_method: paymentMethod,
+          transaction_ref: ref,
+          amount_egp: plan.priceEGP,
+          phone_number: phoneNumber || null,
+          status: "pending",
+        }),
       })
 
       return NextResponse.json({
@@ -59,25 +61,29 @@ export async function POST(request: NextRequest) {
 
     // Action 2: Verify payment (from n8n webhook or admin)
     if (action === "verify") {
-      if (!transactionRef) {
+      if (!userId || !planId) {
         return NextResponse.json(
-          { error: "Missing transactionRef" },
+          { error: "Missing required fields: userId, planId" },
           { status: 400 }
         )
       }
 
-      const result = await verifyPayment(transactionRef)
+      const result = await verifyPayment({
+        userId,
+        planId: planId as PlanId,
+        paymentMethod: paymentMethod || "instapay",
+        transactionRef: transactionRef || `manual-${Date.now()}`,
+      })
+
       if (!result.success) {
         return NextResponse.json(
           { error: result.error || "Verification failed" },
-          { status: 404 }
+          { status: 500 }
         )
       }
 
       return NextResponse.json({
         success: true,
-        userId: result.userId,
-        planId: result.planId,
         message: "Subscription activated successfully",
       })
     }

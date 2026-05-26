@@ -35,9 +35,9 @@ export async function GET(_request: NextRequest) {
         ? {
             plan: subscription.plan_id,
             status: subscription.status,
-            startDate: subscription.start_date,
-            endDate: subscription.end_date,
-            paymentVerified: subscription.payment_verified,
+            postsLimit: subscription.posts_limit,
+            startDate: subscription.current_period_start,
+            endDate: subscription.current_period_end,
           }
         : null,
     })

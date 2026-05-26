@@ -5,21 +5,21 @@ export interface UserSubscription {
   id: string
   user_id: string
   plan_id: PlanId
-  status: "active" | "expired" | "cancelled" | "pending"
-  start_date: string
-  end_date: string | null
-  payment_method: string | null
-  payment_ref: string | null
-  payment_verified: boolean
+  status: "active" | "expired" | "cancelled" | "pending" | "trialing"
+  posts_limit: number
+  brands_limit: number
+  current_period_start: string
+  current_period_end: string | null
+  created_at: string
+  updated_at: string
 }
 
 export interface UsageRecord {
   id: string
   user_id: string
-  month: number
-  year: number
+  month: string // DATE: YYYY-MM-DD
   posts_used: number
-  posts_limit: number
+  brands_used: number
 }
 
 export interface UsageInfo {
@@ -27,7 +27,7 @@ export interface UsageInfo {
   limit: number
   remaining: number
   plan: PlanId
-  isPro: boolean // true if unlimited
+  isPro: boolean
 }
 
 const PLAN_POST_LIMITS: Record<PlanId, number> = {
@@ -37,14 +37,18 @@ const PLAN_POST_LIMITS: Record<PlanId, number> = {
   agency: -1, // unlimited
 }
 
-const supabase = createClient()
+function getCurrentMonthKey(): string {
+  const now = new Date()
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-01`
+}
 
 /**
  * Get the current user's subscription
  */
 export async function getUserSubscription(userId: string): Promise<UserSubscription | null> {
+  const supabase = createClient()
   const { data, error } = await supabase
-    .from("user_subscriptions")
+    .from("subscriptions")
     .select("*")
     .eq("user_id", userId)
     .order("created_at", { ascending: false })
@@ -56,76 +60,60 @@ export async function getUserSubscription(userId: string): Promise<UserSubscript
 }
 
 /**
- * Get or create usage record for current month
+ * Get usage record for current month
  */
-export async function getOrCreateUsage(userId: string, planId: PlanId): Promise<UsageRecord> {
-  const now = new Date()
-  const month = now.getMonth() + 1
-  const year = now.getFullYear()
+export async function getCurrentUsage(userId: string): Promise<UsageRecord | null> {
+  const supabase = createClient()
+  const monthKey = getCurrentMonthKey()
 
-  // Try to find existing record
-  const { data: existing } = await supabase
-    .from("usage_tracking")
+  const { data, error } = await supabase
+    .from("usage_tracker")
     .select("*")
     .eq("user_id", userId)
-    .eq("month", month)
-    .eq("year", year)
-    .single()
+    .gte("month", monthKey)
+    .lt("month", `${new Date().getFullYear()}-${String(new Date().getMonth() + 2).padStart(2, "0")}-01`)
+    .limit(1)
+    .maybeSingle()
 
-  if (existing) return existing as UsageRecord
-
-  // Create new record
-  const limit = PLAN_POST_LIMITS[planId] ?? 3
-  // If unlimited (pro/agency), use a large number for display but keep 0 used
-  const displayLimit = limit === -1 ? 999999 : limit
-
-  const { data: created, error } = await supabase
-    .from("usage_tracking")
-    .insert({
-      user_id: userId,
-      month,
-      year,
-      posts_used: 0,
-      posts_limit: displayLimit,
-    })
-    .select()
-    .single()
-
-  if (error || !created) throw new Error("Failed to create usage record")
-  return created as UsageRecord
+  if (error) return null
+  return data as UsageRecord | null
 }
 
 /**
- * Increment usage counter
+ * Increment usage counter for current month
  */
-export async function incrementUsage(userId: string): Promise<void> {
-  const now = new Date()
-  const month = now.getMonth() + 1
-  const year = now.getFullYear()
+export async function incrementUsage(userId: string): Promise<boolean> {
+  const supabase = createClient()
+  const monthKey = getCurrentMonthKey()
 
-  const { error } = await supabase.rpc("increment_usage", {
-    p_user_id: userId,
-    p_month: month,
-    p_year: year,
-  })
+  // Check if record exists
+  const existing = await getCurrentUsage(userId)
 
-  // If RPC doesn't exist yet, use direct update
-  if (error) {
-    // Try increment directly
-    const { error: updateError } = await supabase
-      .from("usage_tracking")
-      .update({ posts_used: supabase.rpc("increment", { amount: 1 }) } as Record<string, unknown>)
-      .eq("user_id", userId)
-      .eq("month", month)
-      .eq("year", year)
+  if (existing) {
+    const { error } = await supabase
+      .from("usage_tracker")
+      .update({ posts_used: (existing.posts_used || 0) + 1 })
+      .eq("id", existing.id)
 
-    // Last resort: increment via raw SQL
-    if (updateError) {
-      await supabase.from("usage_tracking").upsert(
-        { user_id: userId, month, year, posts_used: 1 },
-        { onConflict: "user_id,month,year" }
-      )
+    if (error) {
+      console.warn("Failed to increment usage:", error)
+      return false
     }
+    return true
+  } else {
+    // Create new usage record
+    const { error } = await supabase.from("usage_tracker").insert({
+      user_id: userId,
+      month: monthKey,
+      posts_used: 1,
+      brands_used: 0,
+    })
+
+    if (error) {
+      console.warn("Failed to create usage record:", error)
+      return false
+    }
+    return true
   }
 }
 
@@ -138,9 +126,13 @@ export async function checkUsageLimit(userId: string): Promise<{
   error?: string
 }> {
   try {
+    const supabase = createClient()
     const subscription = await getUserSubscription(userId)
-    const planId: PlanId = subscription?.plan_id ?? "free"
-    const limit = PLAN_POST_LIMITS[planId]
+
+    // If no subscription found, use free plan defaults
+    const planId: PlanId = (subscription?.plan_id as PlanId) ?? "free"
+    // Use posts_limit from subscription table if available, otherwise derive from plan
+    const limit = subscription?.posts_limit ?? PLAN_POST_LIMITS[planId] ?? 3
 
     // Pro/Agency = unlimited
     if (limit === -1) {
@@ -150,35 +142,24 @@ export async function checkUsageLimit(userId: string): Promise<{
       }
     }
 
-    const usage = await getOrCreateUsage(userId, planId)
+    const usage = await getCurrentUsage(userId)
+    const used = usage?.posts_used ?? 0
 
-    if (usage.posts_used >= limit) {
+    if (used >= limit) {
       return {
         allowed: false,
-        usage: {
-          used: usage.posts_used,
-          limit,
-          remaining: 0,
-          plan: planId,
-          isPro: false,
-        },
+        usage: { used, limit, remaining: 0, plan: planId, isPro: false },
         error: `You've reached your monthly limit of ${limit} posts. Upgrade your plan to generate more.`,
       }
     }
 
     return {
       allowed: true,
-      usage: {
-        used: usage.posts_used,
-        limit,
-        remaining: limit - usage.posts_used,
-        plan: planId,
-        isPro: false,
-      },
+      usage: { used, limit, remaining: limit - used, plan: planId, isPro: false },
     }
   } catch (dbError) {
-    // Graceful fallback: if DB tables don't exist yet, allow generation
-    console.warn("DB not ready for usage tracking, allowing (run migration):", dbError)
+    // Graceful fallback
+    console.warn("DB not ready for usage tracking, allowing:", dbError)
     return {
       allowed: true,
       usage: { used: 0, limit: 999, remaining: 999, plan: "free", isPro: false },
@@ -187,88 +168,122 @@ export async function checkUsageLimit(userId: string): Promise<{
 }
 
 /**
- * Verify a payment transaction
+ * Update subscription plan (after payment verification)
  */
-export async function verifyPayment(transactionRef: string): Promise<{
-  success: boolean
-  userId?: string
-  planId?: string
-  error?: string
-}> {
-  const { data: transaction, error } = await supabase
-    .from("payment_transactions")
-    .select("*, user_subscriptions!inner(user_id, plan_id)")
-    .eq("transaction_ref", transactionRef)
-    .single()
-
-  if (error || !transaction) {
-    return { success: false, error: "Transaction not found" }
-  }
-
-  // Mark transaction as verified
-  await supabase
-    .from("payment_transactions")
-    .update({ status: "verified", verified_at: new Date().toISOString(), verified_by: "webhook" })
-    .eq("id", transaction.id)
-
-  // Update subscription
-  await supabase
-    .from("user_subscriptions")
-    .update({
-      status: "active",
-      payment_verified: true,
-      updated_at: new Date().toISOString(),
-    })
-    .eq("user_id", transaction.user_id)
-
-  // Update usage limit
-  const planId = transaction.plan_id
-  const limit = PLAN_POST_LIMITS[planId as PlanId] ?? 3
+export async function updateSubscriptionPlan(
+  userId: string,
+  planId: PlanId,
+): Promise<boolean> {
+  const supabase = createClient()
+  const limit = PLAN_POST_LIMITS[planId]
   const displayLimit = limit === -1 ? 999999 : limit
 
-  const now = new Date()
-  await supabase.from("usage_tracking").upsert(
-    {
-      user_id: transaction.user_id,
-      month: now.getMonth() + 1,
-      year: now.getFullYear(),
+  const { error } = await supabase
+    .from("subscriptions")
+    .update({
+      plan_id: planId,
+      status: "active",
       posts_limit: displayLimit,
-    },
-    { onConflict: "user_id,month,year" }
-  )
+      updated_at: new Date().toISOString(),
+    })
+    .eq("user_id", userId)
 
-  return {
-    success: true,
-    userId: transaction.user_id,
-    planId: transaction.plan_id,
+  if (error) {
+    console.warn("Failed to update subscription:", error)
+    return false
   }
+  return true
 }
 
 /**
- * Create a payment transaction record
+ * Verify a payment transaction (for n8n webhook / admin)
+ * Updates the subscription plan and logs payment in content_history
  */
-export async function createPaymentTransaction(params: {
+export async function verifyPayment(params: {
   userId: string
   planId: PlanId
-  amountEGP: number
-  paymentMethod: "instapay" | "vodafone_cash"
+  paymentMethod: string
   transactionRef: string
-  phoneNumber?: string
-}): Promise<{ id: string } | null> {
-  const { data, error } = await supabase
-    .from("payment_transactions")
-    .insert({
+}): Promise<{ success: boolean; error?: string }> {
+  const supabase = createClient()
+
+  // First, check if the user has a subscription
+  const subscription = await getUserSubscription(params.userId)
+
+  if (!subscription) {
+    // No subscription exists - but with the trigger on auth.users, this shouldn't happen
+    // If it does, create one
+    const limit = PLAN_POST_LIMITS[params.planId]
+    const displayLimit = limit === -1 ? 999999 : limit
+
+    const { error: insertError } = await supabase.from("subscriptions").insert({
       user_id: params.userId,
       plan_id: params.planId,
-      amount_egp: params.amountEGP,
+      status: "active",
+      posts_limit: displayLimit,
+      brands_limit: params.planId === "agency" ? 999 : params.planId === "pro" ? 10 : 3,
+      current_period_start: new Date().toISOString(),
+    })
+
+    if (insertError) {
+      return { success: false, error: "Failed to create subscription" }
+    }
+  } else {
+    // Update existing subscription
+    const limit = PLAN_POST_LIMITS[params.planId]
+    const displayLimit = limit === -1 ? 999999 : limit
+
+    const { error: updateError } = await supabase
+      .from("subscriptions")
+      .update({
+        plan_id: params.planId,
+        status: "active",
+        posts_limit: displayLimit,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", subscription.id)
+
+    if (updateError) {
+      return { success: false, error: "Failed to update subscription" }
+    }
+  }
+
+  // Log payment in content_history for record
+  await supabase.from("content_history").insert({
+    user_id: params.userId,
+    content: JSON.stringify({
+      type: "payment",
+      plan_id: params.planId,
       payment_method: params.paymentMethod,
       transaction_ref: params.transactionRef,
-      phone_number: params.phoneNumber || null,
-      status: "pending",
-    })
-    .select("id")
-    .single()
+      amount_egp: params.planId === "agency" ? 999 : params.planId === "pro" ? 499 : 199,
+      verified_at: new Date().toISOString(),
+    }),
+    platform: "payment",
+  })
 
-  if (error) return null
-  return { id: data.id }
+  return { success: true }
+}
+
+/**
+ * Get all payment records for admin (from content_history)
+ */
+export async function getPaymentRecords() {
+  const supabase = createClient()
+  const { data, error } = await supabase
+    .from("content_history")
+    .select("*")
+    .eq("platform", "payment")
+    .order("created_at", { ascending: false })
+
+  if (error) return []
+  return data.map((record) => {
+    let content: Record<string, unknown> = {}
+    try {
+      content = JSON.parse(record.content || "{}")
+    } catch {
+      // ignore
+    }
+    return { id: record.id, user_id: record.user_id, ...content, created_at: record.created_at }
+  })
 }

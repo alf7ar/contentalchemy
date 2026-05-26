@@ -11,29 +11,46 @@ export async function GET(_request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 })
     }
 
-    // Fetch payment transactions
-    const { data: transactions } = await supabase
-      .from("payment_transactions")
+    // Fetch payment records from content_history (where platform = 'payment')
+    const { data: paymentRecords } = await supabase
+      .from("content_history")
       .select("*")
+      .eq("platform", "payment")
       .order("created_at", { ascending: false })
       .limit(50)
 
-    // Fetch active subscriptions
+    // Parse JSON content for each payment record
+    const transactions = (paymentRecords || []).map((record) => {
+      let content: Record<string, unknown> = {}
+      try {
+        content = JSON.parse(record.content || "{}")
+      } catch {
+        // ignore
+      }
+      return {
+        id: record.id,
+        user_id: record.user_id,
+        created_at: record.created_at,
+        ...content,
+      }
+    })
+
+    // Fetch subscriptions from the existing table
     const { data: subscriptions } = await supabase
-      .from("user_subscriptions")
+      .from("subscriptions")
       .select("*")
       .order("created_at", { ascending: false })
       .limit(50)
 
     return NextResponse.json({
-      transactions: transactions || [],
+      transactions,
       subscriptions: subscriptions || [],
       admin: session.user.email,
     })
   } catch (error) {
     console.error("Admin API error:", error)
     return NextResponse.json(
-      { error: "Database not ready. Run the SQL migration first." },
+      { error: "Database query failed" },
       { status: 503 }
     )
   }
@@ -56,48 +73,42 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "Missing transactionId" }, { status: 400 })
       }
 
-      // Get the transaction
-      const { data: transaction } = await supabase
-        .from("payment_transactions")
+      // Get the transaction from content_history
+      const { data: record } = await supabase
+        .from("content_history")
         .select("*")
         .eq("id", transactionId)
         .single()
 
-      if (!transaction) {
+      if (!record) {
         return NextResponse.json({ error: "Transaction not found" }, { status: 404 })
       }
 
-      // Mark transaction as verified
-      await supabase
-        .from("payment_transactions")
-        .update({ status: "verified", verified_at: new Date().toISOString(), verified_by: "admin" })
-        .eq("id", transactionId)
+      let content: Record<string, unknown> = {}
+      try {
+        content = JSON.parse(record.content || "{}")
+      } catch {
+        // ignore
+      }
 
-      // Activate subscription
-      const limit = transaction.plan_id === "pro" || transaction.plan_id === "agency" ? 999999 : 50
-      await supabase
-        .from("user_subscriptions")
-        .upsert({
-          user_id: transaction.user_id,
-          plan_id: transaction.plan_id,
+      const targetPlan = (content.plan_id as string) || planId || "pro"
+      const targetUserId = record.user_id
+      const limit = targetPlan === "agency" ? 999999 : targetPlan === "pro" ? 500 : 50
+
+      // Update subscription in existing table
+      const { error: subError } = await supabase
+        .from("subscriptions")
+        .update({
+          plan_id: targetPlan,
           status: "active",
-          payment_method: transaction.payment_method,
-          payment_ref: transaction.transaction_ref,
-          payment_verified: true,
-          start_date: new Date().toISOString(),
-        }, { onConflict: "user_id,plan_id" })
-
-      // Update usage limit
-      const now = new Date()
-      await supabase.from("usage_tracking").upsert(
-        {
-          user_id: transaction.user_id,
-          month: now.getMonth() + 1,
-          year: now.getFullYear(),
           posts_limit: limit,
-        },
-        { onConflict: "user_id,month,year" }
-      )
+          updated_at: new Date().toISOString(),
+        })
+        .eq("user_id", targetUserId)
+
+      if (subError) {
+        return NextResponse.json({ error: "Failed to update subscription" }, { status: 500 })
+      }
 
       return NextResponse.json({ success: true, message: "Payment verified and subscription activated" })
     }
@@ -107,28 +118,21 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "Missing userId or planId" }, { status: 400 })
       }
 
-      const limit = planId === "pro" || planId === "agency" ? 999999 : 50
-      await supabase
-        .from("user_subscriptions")
-        .upsert({
-          user_id: userId,
+      const limit = planId === "agency" ? 999999 : planId === "pro" ? 500 : 50
+
+      const { error: subError } = await supabase
+        .from("subscriptions")
+        .update({
           plan_id: planId,
           status: "active",
-          payment_method: "instapay",
-          payment_verified: true,
-          start_date: new Date().toISOString(),
-        }, { onConflict: "user_id,plan_id" })
-
-      const now = new Date()
-      await supabase.from("usage_tracking").upsert(
-        {
-          user_id: userId,
-          month: now.getMonth() + 1,
-          year: now.getFullYear(),
           posts_limit: limit,
-        },
-        { onConflict: "user_id,month,year" }
-      )
+          updated_at: new Date().toISOString(),
+        })
+        .eq("user_id", userId)
+
+      if (subError) {
+        return NextResponse.json({ error: "Failed to update subscription" }, { status: 500 })
+      }
 
       return NextResponse.json({ success: true, message: "Subscription activated" })
     }
@@ -137,7 +141,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Admin API error:", error)
     return NextResponse.json(
-      { error: "Database not ready. Run the SQL migration first." },
+      { error: "Database query failed" },
       { status: 503 }
     )
   }

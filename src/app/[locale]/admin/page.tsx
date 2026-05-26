@@ -5,7 +5,7 @@ import { useParams } from "next/navigation"
 import Link from "next/link"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
-import { Shield, Check, X, Clock, Smartphone, Wallet, RefreshCw, AlertTriangle } from "lucide-react"
+import { Shield, Check, Clock, Smartphone, Wallet, RefreshCw, AlertTriangle } from "lucide-react"
 
 interface Transaction {
   id: string
@@ -16,8 +16,6 @@ interface Transaction {
   transaction_ref: string
   phone_number: string | null
   status: string
-  verified_by: string | null
-  verified_at: string | null
   created_at: string
 }
 
@@ -26,9 +24,10 @@ interface Subscription {
   user_id: string
   plan_id: string
   status: string
-  payment_verified: boolean
-  start_date: string
-  end_date: string | null
+  posts_limit: number
+  current_period_start: string
+  current_period_end: string | null
+  created_at: string
 }
 
 export default function AdminPage() {
@@ -327,13 +326,13 @@ export default function AdminPage() {
                           </span>
                         </td>
                         <td className="py-3 px-4">
-                          {sub.payment_verified ? (
+                          {sub.posts_limit > 3 ? (
                             <Check className="w-4 h-4 text-green-500" />
                           ) : (
-                            <X className="w-4 h-4 text-red-400" />
+                            <span className="text-xs text-gray-400">free</span>
                           )}
                         </td>
-                        <td className="py-3 px-4 text-gray-500">{new Date(sub.start_date).toLocaleDateString()}</td>
+                        <td className="py-3 px-4 text-gray-500">{new Date(sub.current_period_start).toLocaleDateString()}</td>
                       </tr>
                     ))}
                   </tbody>
