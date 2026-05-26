@@ -82,6 +82,29 @@ export default function DashboardPage() {
     localStorage.setItem("contentalchemy_history", JSON.stringify(updated))
   }
 
+  // Regenerate a single platform
+  const regeneratePlatform = async (platform: Platform) => {
+    if (!topic.trim() || generating) return
+    setGenerating(true)
+    try {
+      const res = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ platform, topic, businessName, businessType, tone }),
+      })
+      if (!res.ok) throw new Error("API error")
+      const data = await res.json() as { title: string; content: string; hashtags: string[] }
+      const newResult: GeneratedContent = { platform, title: data.title, content: data.content, hashtags: data.hashtags }
+      // Replace the result for this platform
+      setResults(prev => prev.map(r => r.platform === platform ? newResult : r))
+      saveToHistory([newResult])
+    } catch (error) {
+      console.error("Regeneration error:", error)
+    } finally {
+      setGenerating(false)
+    }
+  }
+
   // Generate content and save to history
   const handleGenerateWithHistory = async () => {
     if (!topic.trim()) return
@@ -346,8 +369,13 @@ export default function DashboardPage() {
                               <Copy className="w-5 h-5 text-gray-500" />
                             )}
                           </button>
-                          <button className="p-2 rounded-lg hover:bg-white/50 transition-colors" title="إعادة إنشاء">
-                            <RefreshCw className="w-5 h-5 text-gray-500" />
+                          <button
+                            onClick={() => regeneratePlatform(result.platform)}
+                            disabled={generating}
+                            className="p-2 rounded-lg hover:bg-white/50 transition-colors disabled:opacity-50"
+                            title="إعادة إنشاء"
+                          >
+                            <RefreshCw className={`w-5 h-5 text-gray-500 ${generating ? "animate-spin" : ""}`} />
                           </button>
                         </div>
                       </div>
