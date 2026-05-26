@@ -1,5 +1,7 @@
 export const INSTAPAY_NUMBER = "01111143036"
 export const INSTAPAY_WALLET_PROVIDER = "Instapay"
+export const VODAFONE_CASH_NUMBER = "01111143036"
+export const VODAFONE_CASH_WALLET_PROVIDER = "Vodafone Cash"
 
 export const PLANS = {
   free: {
@@ -58,6 +60,8 @@ export function generateInstapayRef(): string {
   return `CA-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`
 }
 
+export type PaymentMethod = "instapay" | "vodafone_cash"
+
 export function getInstapayInstructions(planId: PlanId): {
   amount: number
   number: string
@@ -74,6 +78,30 @@ export function getInstapayInstructions(planId: PlanId): {
     steps: [
       "افتح تطبيق Instapay على هاتفك",
       `ادفع ${plan.priceEGP} جنيه إلى الرقم: ${INSTAPAY_NUMBER}`,
+      "انسخ كود التحويل الظاهر أدناه",
+      "أدخل كود التحويل في الموقع لتأكيد الدفع",
+      "سيتم تفعيل الباقة فوراً بعد التحقق",
+    ],
+  }
+}
+
+export function getVodafoneCashInstructions(planId: PlanId): {
+  amount: number
+  number: string
+  wallet: string
+  reference: string
+  steps: string[]
+} {
+  const plan = PLANS[planId]
+  return {
+    amount: plan.priceEGP,
+    number: VODAFONE_CASH_NUMBER,
+    wallet: VODAFONE_CASH_WALLET_PROVIDER,
+    reference: generateInstapayRef(),
+    steps: [
+      "افتح تطبيق My Vodafone أو اتصل على #9*",
+      "اختر 'محفظة فودافون' ثم 'تحويل أموال'",
+      `ادفع ${plan.priceEGP} جنيه إلى الرقم: ${VODAFONE_CASH_NUMBER}`,
       "انسخ كود التحويل الظاهر أدناه",
       "أدخل كود التحويل في الموقع لتأكيد الدفع",
       "سيتم تفعيل الباقة فوراً بعد التحقق",

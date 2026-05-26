@@ -26,7 +26,7 @@ test.describe("Pricing Page", () => {
   test("Instapay modal shows payment details", async ({ page }) => {
     await page.goto("/ar/pricing")
     await page.locator("button", { hasText: "اشترك الآن" }).first().click()
-    await expect(page.getByText("رقم Instapay:").first()).toBeVisible()
+    await expect(page.getByText("رقم الحساب:").first()).toBeVisible()
     await expect(page.getByText("المبلغ:").first()).toBeVisible()
     await expect(page.getByText("كود التحويل:").first()).toBeVisible()
   })

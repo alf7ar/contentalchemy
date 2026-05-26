@@ -6,14 +6,15 @@ import { useParams } from "next/navigation"
 import Link from "next/link"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
-import { Check, X, Copy, CheckCircle, Smartphone, Shield } from "lucide-react"
-import { PLANS, getInstapayInstructions, type PlanId } from "@/lib/payment"
+import { Check, X, Copy, CheckCircle, Smartphone, Shield, Wallet } from "lucide-react"
+import { PLANS, getInstapayInstructions, getVodafoneCashInstructions, type PlanId, type PaymentMethod } from "@/lib/payment"
 
 export default function PricingPage() {
   const t = useTranslations("pricing")
   const params = useParams()
   const locale = params.locale as string
   const [selectedPlan, setSelectedPlan] = useState<PlanId | null>(null)
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("instapay")
   const [copied, setCopied] = useState(false)
 
   const plans = [
@@ -53,7 +54,11 @@ export default function PricingPage() {
     setSelectedPlan(planId)
   }
 
-  const instapayInfo = selectedPlan ? getInstapayInstructions(selectedPlan) : null
+  const paymentInfo = selectedPlan
+    ? paymentMethod === "instapay"
+      ? getInstapayInstructions(selectedPlan)
+      : getVodafoneCashInstructions(selectedPlan)
+    : null
 
   const copyToClipboard = async (text: string) => {
     await navigator.clipboard.writeText(text)
@@ -65,13 +70,13 @@ export default function PricingPage() {
     <>
       <Navbar />
       <main className="flex-1 bg-gradient-to-b from-white to-gray-50">
-        {/* Instapay Modal */}
-        {selectedPlan && instapayInfo && (
+        {/* Payment Modal */}
+        {selectedPlan && paymentInfo && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
             <div className="bg-white rounded-3xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6 border-b border-gray-100 flex items-center justify-between">
                 <h2 className="text-xl font-bold text-gray-900">
-                  الدفع عبر Instapay
+                  الدفع عبر {paymentMethod === "instapay" ? "Instapay" : "Vodafone Cash"}
                 </h2>
                 <button onClick={() => setSelectedPlan(null)} className="p-2 rounded-xl hover:bg-gray-100">
                   <X className="w-5 h-5" />
@@ -79,12 +84,42 @@ export default function PricingPage() {
               </div>
 
               <div className="p-6 space-y-6">
+                {/* Payment method selector */}
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setPaymentMethod("instapay")}
+                    className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-medium text-sm transition-all border ${
+                      paymentMethod === "instapay"
+                        ? "bg-primary-50 text-primary-700 border-primary-200"
+                        : "bg-white text-gray-600 border-gray-200 hover:border-gray-300"
+                    }`}
+                  >
+                    <Smartphone className="w-5 h-5" />
+                    Instapay
+                  </button>
+                  <button
+                    onClick={() => setPaymentMethod("vodafone_cash")}
+                    className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-medium text-sm transition-all border ${
+                      paymentMethod === "vodafone_cash"
+                        ? "bg-red-50 text-red-700 border-red-200"
+                        : "bg-white text-gray-600 border-gray-200 hover:border-gray-300"
+                    }`}
+                  >
+                    <Wallet className="w-5 h-5" />
+                    Vodafone Cash
+                  </button>
+                </div>
+
                 <div className="bg-gradient-to-br from-primary-50 to-accent-50 rounded-2xl p-6 text-center">
                   <div className="w-16 h-16 mx-auto bg-primary-100 rounded-2xl flex items-center justify-center mb-4">
-                    <Smartphone className="w-8 h-8 text-primary-600" />
+                    {paymentMethod === "instapay" ? (
+                      <Smartphone className="w-8 h-8 text-primary-600" />
+                    ) : (
+                      <Wallet className="w-8 h-8 text-red-600" />
+                    )}
                   </div>
                   <p className="text-3xl font-bold text-gray-900 mb-1">
-                    {instapayInfo.amount} <span className="text-lg">جنيه</span>
+                    {paymentInfo.amount} <span className="text-lg">جنيه</span>
                   </p>
                   <p className="text-gray-500">باقة {PLANS[selectedPlan].name}</p>
                 </div>
@@ -92,7 +127,7 @@ export default function PricingPage() {
                 <div className="space-y-3">
                   <h3 className="font-semibold text-gray-900">تعليمات الدفع:</h3>
                   <ol className="space-y-2">
-                    {instapayInfo.steps.map((step, i) => (
+                    {paymentInfo.steps.map((step, i) => (
                       <li key={i} className="flex items-start gap-3 text-sm text-gray-600">
                         <span className="w-6 h-6 bg-primary-100 text-primary-700 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold">
                           {i + 1}
@@ -105,25 +140,25 @@ export default function PricingPage() {
 
                 <div className="bg-gray-50 rounded-2xl p-4 space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-500">رقم Instapay:</span>
+                    <span className="text-sm text-gray-500">رقم الحساب:</span>
                     <div className="flex items-center gap-2">
-                      <code className="text-sm font-bold text-gray-900" dir="ltr">{instapayInfo.number}</code>
-                      <button onClick={() => copyToClipboard(instapayInfo.number)} className="p-1 hover:bg-white rounded-lg transition-colors">
+                      <code className="text-sm font-bold text-gray-900" dir="ltr">{paymentInfo.number}</code>
+                      <button onClick={() => copyToClipboard(paymentInfo.number)} className="p-1 hover:bg-white rounded-lg transition-colors">
                         <Copy className="w-4 h-4 text-gray-400" />
                       </button>
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-500">المبلغ:</span>
-                    <span className="font-bold text-gray-900">{instapayInfo.amount} جنيه</span>
+                    <span className="font-bold text-gray-900">{paymentInfo.amount} جنيه</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-500">كود التحويل:</span>
                     <div className="flex items-center gap-2">
                       <code className="text-sm font-bold text-primary-600 bg-primary-50 px-2 py-1 rounded-lg">
-                        {instapayInfo.reference}
+                        {paymentInfo.reference}
                       </code>
-                      <button onClick={() => copyToClipboard(instapayInfo.reference)} className="p-1 hover:bg-white rounded-lg transition-colors">
+                      <button onClick={() => copyToClipboard(paymentInfo.reference)} className="p-1 hover:bg-white rounded-lg transition-colors">
                         {copied ? <CheckCircle className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4 text-gray-400" />}
                       </button>
                     </div>
@@ -132,7 +167,7 @@ export default function PricingPage() {
 
                 <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-4 text-sm text-yellow-800">
                   <p className="font-medium mb-1">📱 بعد الدفع:</p>
-                  <p>أرسل صورة الإيصال وكود التحويل عبر واتساب إلى الرقم نفسه للتأكيد وسيتم تفعيل باقاتك فوراً.</p>
+                  <p>أرسل صورة الإيصال {paymentMethod === "instapay" ? "وكود التحويل" : "ورقم العملية"} عبر واتساب إلى الرقم نفسه للتأكيد وسيتم تفعيل باقاتك فوراً.</p>
                 </div>
 
                 <button
@@ -152,10 +187,12 @@ export default function PricingPage() {
               <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">{t("title")}</h1>
               <p className="text-xl text-gray-500 mb-4">{t("subtitle")}</p>
               {/* Trust badges */}
-              <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
-                <span className="flex items-center gap-1"><Smartphone className="w-4 h-4 text-green-600" /> دفع عبر Instapay</span>
+              <div className="flex flex-wrap items-center justify-center gap-3 text-sm text-gray-500">
+                <span className="flex items-center gap-1"><Smartphone className="w-4 h-4 text-green-600" /> Instapay</span>
                 <span className="text-gray-300">•</span>
-                <span className="flex items-center gap-1"><Shield className="w-4 h-4 text-green-600" /> بدون بطاقة ائتمان</span>
+                <span className="flex items-center gap-1"><Wallet className="w-4 h-4 text-red-600" /> Vodafone Cash</span>
+                <span className="text-gray-300">•</span>
+                <span className="flex items-center gap-1"><Shield className="w-4 h-4 text-green-600" /> بدون بطاقة</span>
                 <span className="text-gray-300">•</span>
                 <span className="flex items-center gap-1"><Check className="w-4 h-4 text-green-600" /> إلغاء في أي وقت</span>
               </div>
@@ -220,10 +257,10 @@ export default function PricingPage() {
             <div className="mt-16 text-center">
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-50 text-green-700 rounded-full text-sm font-medium">
                 <Smartphone className="w-4 h-4" />
-                الدفع عبر Instapay - تحويل فوري ومباشر
+                الدفع عبر Instapay أو Vodafone Cash - تحويل فوري ومباشر
               </div>
               <p className="text-gray-500 mt-4 text-sm">
-                لا تحتاج لبطاقة ائتمان. ادفع مرة واحدة عبر Instapay واستمتع بالخدمة لشهر كامل
+                لا تحتاج لبطاقة ائتمان. ادفع مرة واحدة عبر Instapay أو Vodafone Cash واستمتع بالخدمة لشهر كامل
               </p>
             </div>
           </div>
