@@ -12,8 +12,33 @@ export async function generateMetadata({
 }) {
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: "hero" })
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://contentalchemy.vercel.app"
   return {
     title: t("title"),
+    description: t("subtitle"),
+    metadataBase: new URL(baseUrl),
+    openGraph: {
+      title: t("title"),
+      description: t("subtitle"),
+      locale: locale === "ar" ? "ar_EG" : "en_US",
+      type: "website",
+      siteName: "ContentAlchemy",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: t("title"),
+      description: t("subtitle"),
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
+    },
   }
 }
 
