@@ -86,6 +86,12 @@ export default function DashboardPage() {
     localStorage.setItem("contentalchemy_history", JSON.stringify(updated))
   }
 
+  const deleteHistoryEntry = (index: number) => {
+    const updated = history.filter((_, i) => i !== index)
+    setHistory(updated)
+    localStorage.setItem("contentalchemy_history", JSON.stringify(updated))
+  }
+
   // Regenerate a single platform
   const regeneratePlatform = async (platform: Platform) => {
     if (!topic.trim() || generating) return
@@ -438,12 +444,20 @@ export default function DashboardPage() {
                             <button
                               onClick={() => copyToClipboard(entry.content + "\n\n" + entry.hashtags.join(" "), 999 + i)}
                               className="p-1.5 rounded-lg hover:bg-gray-50 transition-colors"
+                              title="نسخ"
                             >
                               {copiedIndex === 999 + i ? (
                                 <Check className="w-4 h-4 text-green-600" />
                               ) : (
                                 <Copy className="w-4 h-4 text-gray-400" />
                               )}
+                            </button>
+                            <button
+                              onClick={() => deleteHistoryEntry(i)}
+                              className="p-1.5 rounded-lg hover:bg-red-50 transition-colors"
+                              title={locale === "ar" ? "حذف" : "Delete"}
+                            >
+                              <span className="text-gray-400 hover:text-red-500 text-sm font-bold">✕</span>
                             </button>
                           </div>
                         </div>

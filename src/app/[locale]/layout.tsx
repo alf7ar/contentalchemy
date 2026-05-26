@@ -2,6 +2,7 @@ import { NextIntlClientProvider } from "next-intl"
 import { getMessages, getTranslations } from "next-intl/server"
 import { notFound } from "next/navigation"
 import { routing } from "@/i18n/routing"
+import CookieConsent from "@/components/CookieConsent"
 
 type Locale = "ar" | "en"
 
@@ -111,6 +112,7 @@ s0.parentNode.insertBefore(s1,s0);
         <NextIntlClientProvider messages={messages}>
           {children}
         </NextIntlClientProvider>
+        <CookieConsent />
       </body>
     </html>
   )
